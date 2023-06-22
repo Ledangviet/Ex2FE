@@ -1,0 +1,12 @@
+<div class="tree-container">
+    <kendo-treeview
+        class="tree-component"
+        [nodes]="treeNodes"
+        [textField]="['name', 'name']"
+        kendoTreeViewExpandable
+        kendoTreeViewHierarchyBinding
+        childrenField="childs"
+        (selectionChange)="nodeClick($event)"
+    >
+    </kendo-treeview>
+</div>

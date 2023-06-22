@@ -1,0 +1,22 @@
+<div class="node-container">
+    <form *ngIf="nodeData" class="k-form k-form-md" [formGroup]="form"> 
+      <kendo-formfield showErrors="initial">
+        <kendo-label [for]="type" text="Node Type :"></kendo-label>
+        <kendo-dropdownlist         
+          #type formControlName="type" 
+          [data]="types"              
+         >
+        </kendo-dropdownlist>       
+      </kendo-formfield>
+      <kendo-formfield>
+        <kendo-label [for]="title" text="Node Title :"></kendo-label>
+        <kendo-textbox
+          #title
+          formControlName="title"
+        ></kendo-textbox>
+      </kendo-formfield>
+
+    </form>
+    <div class="nodeattribute">Attribute List</div>
+    <app-attributelist></app-attributelist>
+</div>
