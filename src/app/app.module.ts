@@ -16,7 +16,7 @@ import { LabelModule } from '@progress/kendo-angular-label';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 import { GridModule } from '@progress/kendo-angular-grid';
 
-
+import { MaterialModule } from './module/material.module';
 
 
 @NgModule({
@@ -36,8 +36,11 @@ import { GridModule } from '@progress/kendo-angular-grid';
     ReactiveFormsModule,
     InputsModule,
     LabelModule,  
-    DropDownsModule, GridModule
+    DropDownsModule,
+    GridModule,
+    MaterialModule
   ],
+  
   providers: [],
   bootstrap: [AppComponent]
 })

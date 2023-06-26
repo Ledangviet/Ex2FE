@@ -1,42 +1,42 @@
 <kendo-grid
-      title="Attribute List"
-      [data]="attributes"
-      [pageSize]="gridState.take"
-      [skip]="gridState.skip"
-      [sort]="gridState.sort"
+      [kendoGridBinding]="attributes"
+      title="Attribute List"   
       [pageable]="true"
+      [pageSize]="5"
       [sortable]="true"
       (dataStateChange)="onStateChange($event)"
       (edit)="editHandler($event)"
       (cancel)="cancelHandler($event)"
       (save)="saveHandler($event)"
       (remove)="removeHandler($event)"
-      (add)="addHandler($event)"
-      [navigable]="true"
+      (add)="addHandler($event)"      
     >
       <ng-template kendoGridToolbarTemplate>
-        <button kendoGridAddCommand class="btn-add">Add Attribute</button>
+        <button kendoGridAddCommand class="themeColor-custom">Add Attribute</button>
       </ng-template>
       <kendo-grid-column
+        [headerStyle]="{ 'background-color': 'darkturquoise','color': 'white' }"
         field="id"
         title="Id"
+        [width]="70"
       ></kendo-grid-column>
       <kendo-grid-column
+        [headerStyle]="{ 'background-color': 'darkturquoise','color': 'white' }"
         field="name"
         title="Title"
-      ></kendo-grid-column>
-      <kendo-grid-column
-        field="nodeId"
-        title="NodeId"
-      ></kendo-grid-column>     
-      <kendo-grid-command-column title="command" [width]="220">
+        [width]="220"
+      ></kendo-grid-column>        
+      <kendo-grid-command-column
+       [headerStyle]="{ 'background-color': 'darkturquoise','color': 'white' }"
+       title="command" [width]="220"
+       >
         <ng-template kendoGridCellTemplate let-isNew="isNew">
-          <button kendoGridEditCommand [primary]="true">Edit</button>
-          <button kendoGridRemoveCommand>Remove</button>
-          <button kendoGridSaveCommand [disabled]="formGroup.invalid">
+          <button kendoGridEditCommand class="themeColor-custom">Edit</button>
+          <button kendoGridRemoveCommand class="themeColor-custom">Remove</button>
+          <button class="themeColor-custom" [disabled]="formGroup.invalid" kendoGridSaveCommand *ngIf="formGroup">
             {{ isNew ? "Add" : "Update" }}
           </button>
-          <button kendoGridCancelCommand>
+          <button class="themeColor-custom" kendoGridCancelCommand>
             {{ isNew ? "Discard changes" : "Cancel" }}
           </button>
         </ng-template>

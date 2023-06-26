@@ -1,1 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+.mat-mdc-form-field{
+    font-size: 14px;
+}
+.mat-mdc-form-field-flex{
+    height:50px;
+}
+.mat-mdc-select-value-text{
+    font-size: 14px;
+}
+
+.mat-mdc-option {  
+    font-size: var(--mdc-typography-body1-font-size, 14px);
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

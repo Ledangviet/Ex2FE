@@ -1,12 +1,21 @@
 <div class="tree-container">
+  <cdk-virtual-scroll-viewport itemSize="50" class="viewport">
     <kendo-treeview
-        class="tree-component"
-        [nodes]="treeNodes"
-        [textField]="['name', 'name']"
-        kendoTreeViewExpandable
-        kendoTreeViewHierarchyBinding
-        childrenField="childs"
-        (selectionChange)="nodeClick($event)"
+      class="tree-component"
+      [nodes]="treeNodes"
+      [textField]="['name','name']"
+      kendoTreeViewExpandable
+      kendoTreeViewHierarchyBinding
+      childrenField="childs"
+      (selectionChange)="nodeClick($event)"
     >
+      <ng-template class="tree-item" kendoTreeViewNodeTemplate let-dataItem>
+        <mat-icon style="height: 20px;font-size: 20px; line-height: 1.44444;" >
+          {{iconClass(dataItem)}}
+        </mat-icon>
+        {{ dataItem.name }}
+      </ng-template>
     </kendo-treeview>
+      
+  </cdk-virtual-scroll-viewport>  
 </div>

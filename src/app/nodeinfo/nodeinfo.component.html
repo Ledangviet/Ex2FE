@@ -1,22 +1,18 @@
-<div class="node-container">
-    <form *ngIf="nodeData" class="k-form k-form-md" [formGroup]="form"> 
-      <kendo-formfield showErrors="initial">
-        <kendo-label [for]="type" text="Node Type :"></kendo-label>
-        <kendo-dropdownlist         
-          #type formControlName="type" 
-          [data]="types"              
-         >
-        </kendo-dropdownlist>       
-      </kendo-formfield>
-      <kendo-formfield>
-        <kendo-label [for]="title" text="Node Title :"></kendo-label>
-        <kendo-textbox
-          #title
-          formControlName="title"
-        ></kendo-textbox>
-      </kendo-formfield>
-
+<div class="node-container"> 
+    <form class="form-info" style="font-size: 12px"  [formGroup]="form" >
+      <mat-form-field  class="title-formfield"  appearance="outline">
+        <mat-label>Node Title :</mat-label>
+        <input  formControlName="title" matInput >
+      </mat-form-field>
+      <mat-form-field class="title-formfield" appearance="outline" >
+        <mat-label>Node Type :</mat-label>
+        <mat-select formControlName="type">
+          <mat-option *ngFor="let type of types" [value]="type">
+            {{type}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </form>
-    <div class="nodeattribute">Attribute List</div>
-    <app-attributelist></app-attributelist>
+    <app-attributelist ></app-attributelist>
+    <button [disabled]="!nodeData" class="savechange-button" (click)="saveClick()">Save changes</button>
 </div>

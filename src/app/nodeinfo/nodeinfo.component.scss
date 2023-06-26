@@ -1,12 +1,33 @@
 .node-container{  
-    margin-left: 5px;
+    border:1px solid rgb(232, 232, 232);
+    margin-left: 20px;
     border-radius: 5px;
-    min-width: 500px; 
-    min-height: 500px;    
-}
-.info-title{   
-    font-size: 20px;
+    width: 520px;
+    display: flex;
+    flex-direction: column;  
+    padding:25px; 
+    min-height: 490px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background-color: rgb(247, 247, 247);
 }
 .form-info{
-    font-size: 16px;
+    display:flex;
+    flex-direction: column;
+    font-size: 12px;
 }
+.title-formfield{
+    width: 500px;
+    height: 60px;
+}
+.savechange-button{
+    position: absolute;
+    width: 120px;
+    height: 30px;
+    border:0px ;
+    border-radius: 5px;
+    background-color: darkturquoise;
+    color: white;
+    top: 225px;
+    left: 725px;
+}
+
