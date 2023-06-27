@@ -14,5 +14,6 @@
       </mat-form-field>
     </form>
     <app-attributelist ></app-attributelist>
-    <button [disabled]="!nodeData" class="savechange-button" (click)="saveClick()">Save changes</button>
+    <button [disabled]="form.invalid" class="savechange-button" (click)="saveClick()">Save changes</button>
 </div>
+<div kendoDialogContainer></div>

@@ -14,6 +14,7 @@ import {
   AddEvent,
 } from "@progress/kendo-angular-grid";
 import { Subscription } from 'rxjs';
+import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-angular-dialog';
 
 @Component({
   selector: 'app-attributelist',
@@ -36,26 +37,37 @@ export class AttributelistComponent {
   public formGroup:FormGroup;
   private editedRowIndex: number;
 
-  constructor(private nodeService:NodeService){}
-
+  constructor(
+    private nodeService:NodeService,
+    private dialogService:DialogService
+    ){}
+   
   ngOnInit(){
     this.nodeService.idEmit.subscribe((id)=> {
-      this.nodeId = id;
-      this.nodeService.getNodeAttributeByNodeId(this.nodeId).subscribe((res)=>{
-        this.attributes = res;            
-      })     
+          this.loadData(id);
     })     
+  }
+
+  //sunscrible load data service by node Id
+  loadData(id:string){
+    this.nodeId = id;
+    this.eventSubscription.push(this.nodeService.getNodeAttributeByNodeId(this.nodeId).subscribe((res)=>{
+      this.attributes = res;            
+    }))
+      
   }
 
   onStateChange(state: State){}
 
 
+  //cancel editor
   cancelHandler(args: CancelEvent){
     this.closeEditor(args.sender, args.rowIndex);
   }
 
-
+  //add a row to edit row item
   editHandler(args: EditEvent){
+
     const { dataItem } = args;
     this.editingItem = dataItem;
     this.closeEditor(args.sender);
@@ -71,16 +83,42 @@ export class AttributelistComponent {
     args.sender.editRow(args.rowIndex, this.formGroup);
   }
 
+
+  //get data from grid action and call save  service
   saveHandler({ sender, rowIndex, formGroup, isNew }: SaveEvent): void{
-    const attribute: NodeAttributeModel = formGroup.value;
-    this.eventSubscription.push(this.nodeService.save(this.editingItem.id,attribute.name,parseInt(this.nodeId),isNew).subscribe(res=>{
-      this.nodeService.idEmit.emit(this.nodeId);    
+
+    //show dialog
+    const dialog: DialogRef = this.dialogService.open({
+      title: "Save Data",
+      content: "Are you sure to save?",
+      actions: [{ text: "Yes" }, { text: "Cancel", themeColor: "tertiary" }],
+      width: 450,
+      height: 200,
+      minWidth: 250,
+    });
+
+    //subscrible dialog's result and handle
+    this.eventSubscription.push(dialog.result.subscribe((result) => {
+      if (result instanceof DialogCloseResult) {
+        return;
+      } else {
+        if(result.text == "Yes"){
+          const attribute: NodeAttributeModel = formGroup.value;
+          this.eventSubscription.push(this.nodeService.save(this.editingItem.id,attribute.name,parseInt(this.nodeId),isNew).subscribe(res=>{
+            this.nodeService.idEmit.emit(this.nodeId);    
+          }))
+          sender.closeRow(rowIndex);
+        }
+        else{
+          return;
+        }
+      }
     }))
-    sender.closeRow(rowIndex);
   }
 
+  //call the remove attribute service
   public removeHandler(args: RemoveEvent): void {
-    // remove the current dataItem from the current data source,
+    
     this.eventSubscription.push(this.nodeService.remove(args.dataItem).subscribe(res => {
       console.log(res);
       this.nodeService.idEmit.emit(this.nodeId);
@@ -88,6 +126,7 @@ export class AttributelistComponent {
   }
 
   
+  //add a form row to add new attribute with the same nodeId
   addHandler(args: AddEvent){
     this.closeEditor(args.sender);
     // define all editable fields validators and default values

@@ -4,6 +4,7 @@ import { NodeService } from '../service/node.service';
 import { NodeModel } from '../model/NodeModel';
 import { Subscription } from 'rxjs';
 import { UpdateNodeModel } from '../model/UpdateNodeModel';
+import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-angular-dialog';
 
 @Component({
   selector: 'app-nodeinfo',
@@ -17,14 +18,18 @@ export class NodeinfoComponent {
      "Folder",
      "File"
   ];
+  public dialogresult:any;
   public nodeId:string = "0";
   public nodeData: NodeModel;
   public form = new FormGroup({
-    title: new FormControl("This is title!", [Validators.required]),
-    type: new FormControl("This is type!", [Validators.required]),
+    title: new FormControl("", [Validators.required]),
+    type: new FormControl("", [Validators.required]),
   });
 
-  constructor(private nodeService:NodeService){ 
+  constructor(
+    private dialogService:DialogService,
+    private nodeService:NodeService
+    ){ 
     
   }
   ngOnInit(){
@@ -47,21 +52,48 @@ export class NodeinfoComponent {
   } 
   
   saveClick(){
-    var sucess = false;
-    var typeValue :number;      
-    if(this.form.value.title && this.form.value.type){
-      if(this.form.value.type == "File") typeValue = 1
-      else typeValue = 0
-      var updateNodeModel = new UpdateNodeModel(this.nodeData.id,this.form.value.title,typeValue,this.nodeData.parrentId);
-      this.eventSubscription.push(
-        this.nodeService.updateNodeData(updateNodeModel).subscribe((res) => {
-          alert("Update Sucessful!") 
-          this.nodeService.reloadTreeEmit.emit(res);   
-        })
-      )     
-    }     
-  }
+    
+    //logic validate
+    if(this.nodeData.nodeType == "Folder" && this.form.value.type == "File"){
+      alert("Folder can't update to File!")
+      return;
+    }
+    //show dialog action
+    const dialog: DialogRef = this.dialogService.open({
+      title: "Please confirm",
+      content: "Are you sure to update?",
+      actions: [{ text: "Yes" }, { text: "Cancel", themeColor: "tertiary" }],
+      width: 450,
+      height: 200,
+      minWidth: 250,
+    });
 
+    //subscrible dialog result
+    this.eventSubscription.push(dialog.result.subscribe((result) => {
+      if (result instanceof DialogCloseResult) {
+        return;
+      } else {
+        if(result.text == "Yes"){
+          var typeValue :number;      
+          if(this.form.value.title && this.form.value.type){
+            
+            //call update service
+            if(this.form.value.type == "File") typeValue = 1
+            else typeValue = 0
+            var updateNodeModel = new UpdateNodeModel(this.nodeData.id,this.form.value.title,typeValue,this.nodeData.parrentId);
+            this.eventSubscription.push(
+              this.nodeService.updateNodeData(updateNodeModel).subscribe((res) => {
+                alert("Update Sucessful!") 
+                this.nodeService.reloadTreeEmit.emit(res);   
+              })
+            )     
+          }     
+        }
+        else return;               
+      }   
+    }));
+  }
+  
   ngOnDestroy(){
     this.eventSubscription.map(e => e.unsubscribe())
   }

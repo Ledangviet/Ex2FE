@@ -85,7 +85,7 @@ export class NodeService{
     }
 
     // add new or update node attribute
-    public save(id: number , data: string, nodeId: number , isNew?: boolean): Observable<any>{
+    public save(id: number , data: string, nodeId: number , isNew?: boolean){
       const action = isNew ? CREATE_ACTION : UPDATE_ACTION;     
       //this one will add new attribute 
       if(action == "create"){
@@ -101,6 +101,8 @@ export class NodeService{
       }
       return new Observable;
     }  
+
+    //call delete api
     public remove(dataItem: any){
       return this.httpClient.delete<NodeAttributeModel>(this.url+"Attribute?id="+dataItem.id);     
     }     

@@ -17,6 +17,7 @@ import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 import { GridModule } from '@progress/kendo-angular-grid';
 
 import { MaterialModule } from './module/material.module';
+import { DialogModule } from '@progress/kendo-angular-dialog';
 
 
 @NgModule({
@@ -38,7 +39,8 @@ import { MaterialModule } from './module/material.module';
     LabelModule,  
     DropDownsModule,
     GridModule,
-    MaterialModule
+    MaterialModule,
+    DialogModule
   ],
   
   providers: [],
