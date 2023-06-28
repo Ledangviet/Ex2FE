@@ -23,7 +23,7 @@ import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-ang
 })
 export class AttributelistComponent {
   public nodeId:string;
-  public eventSubscription: Subscription[] = [];
+  public eventSubscription: Subscription = new Subscription();
   public attributes: NodeAttributeModel[] = [];
   public saveAttribute: NodeAttributeModel;
 
@@ -51,12 +51,13 @@ export class AttributelistComponent {
   //sunscrible load data service by node Id
   loadData(id:string){
     this.nodeId = id;
-    this.eventSubscription.push(this.nodeService.getNodeAttributeByNodeId(this.nodeId).subscribe((res)=>{
+    this.eventSubscription.add(this.nodeService.getNodeAttributeByNodeId(this.nodeId).subscribe((res)=>{
       this.attributes = res;            
     }))
       
   }
 
+  
   onStateChange(state: State){}
 
 
@@ -98,13 +99,13 @@ export class AttributelistComponent {
     });
 
     //subscrible dialog's result and handle
-    this.eventSubscription.push(dialog.result.subscribe((result) => {
+    this.eventSubscription.add(dialog.result.subscribe((result) => {
       if (result instanceof DialogCloseResult) {
         return;
       } else {
         if(result.text == "Yes"){
           const attribute: NodeAttributeModel = formGroup.value;
-          this.eventSubscription.push(this.nodeService.save(this.editingItem.id,attribute.name,parseInt(this.nodeId),isNew).subscribe(res=>{
+          this.eventSubscription.add(this.nodeService.save(this.editingItem.id,attribute.name,parseInt(this.nodeId),isNew).subscribe(res=>{
             this.nodeService.idEmit.emit(this.nodeId);    
           }))
           sender.closeRow(rowIndex);
@@ -118,11 +119,34 @@ export class AttributelistComponent {
 
   //call the remove attribute service
   public removeHandler(args: RemoveEvent): void {
-    
-    this.eventSubscription.push(this.nodeService.remove(args.dataItem).subscribe(res => {
-      console.log(res);
-      this.nodeService.idEmit.emit(this.nodeId);
+    //show dialog 
+    const dialog: DialogRef = this.dialogService.open({
+      title: "Save Data",
+      content: "Are you sure to delete?",
+      actions: [{ text: "Yes" }, { text: "Cancel", themeColor: "tertiary" }],
+      width: 450,
+      height: 200,
+      minWidth: 250,
+    });
+
+
+    this.eventSubscription.add(dialog.result.subscribe((result) => {
+      if (result instanceof DialogCloseResult) {
+        return;
+      } else {
+        if(result.text == "Yes"){
+          this.eventSubscription.add(this.nodeService.remove(args.dataItem).subscribe(res => {
+            alert("Delete sucessful!")
+            this.nodeService.idEmit.emit(this.nodeId);
+          }))
+        }
+        else{
+          return;
+        }
+      }
     }))
+    
+    
   }
 
   
@@ -146,6 +170,6 @@ export class AttributelistComponent {
   }
 
   ngOnDestroy(){
-    this.eventSubscription.map(e => e.unsubscribe());
+    this.eventSubscription.unsubscribe();
   }
 }

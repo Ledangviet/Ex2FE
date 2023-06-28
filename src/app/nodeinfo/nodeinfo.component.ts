@@ -13,7 +13,7 @@ import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-ang
 })
 
 export class NodeinfoComponent {
-  public eventSubscription : Subscription[] = [];
+  public eventSubscription : Subscription = new Subscription();
   public types: Array<string> = [
      "Folder",
      "File"
@@ -35,10 +35,10 @@ export class NodeinfoComponent {
   ngOnInit(){
  
     //subcrible id from treeview component and fetch API to get data & bind to UI
-    this.eventSubscription.push(
+    this.eventSubscription.add(
        this.nodeService.idEmit.subscribe(id => {
         this.nodeId=id
-        this.eventSubscription.push(
+        this.eventSubscription.add(
           this.nodeService.getNodeDataById(this.nodeId).subscribe((res) => {
             this.nodeData = this.nodeService.FormatData(res);
             this.form = new FormGroup({
@@ -51,8 +51,7 @@ export class NodeinfoComponent {
     );      
   } 
   
-  saveClick(){
-    
+  saveClick(){  
     //logic validate
     if(this.nodeData.nodeType == "Folder" && this.form.value.type == "File"){
       alert("Folder can't update to File!")
@@ -69,7 +68,7 @@ export class NodeinfoComponent {
     });
 
     //subscrible dialog result
-    this.eventSubscription.push(dialog.result.subscribe((result) => {
+    this.eventSubscription.add(dialog.result.subscribe((result) => {
       if (result instanceof DialogCloseResult) {
         return;
       } else {
@@ -81,10 +80,9 @@ export class NodeinfoComponent {
             if(this.form.value.type == "File") typeValue = 1
             else typeValue = 0
             var updateNodeModel = new UpdateNodeModel(this.nodeData.id,this.form.value.title,typeValue,this.nodeData.parrentId);
-            this.eventSubscription.push(
+            this.eventSubscription.add(
               this.nodeService.updateNodeData(updateNodeModel).subscribe((res) => {
-                alert("Update Sucessful!") 
-                this.nodeService.reloadTreeEmit.emit(res);   
+                this.nodeService.reloadTreeEmit.emit(res); 
               })
             )     
           }     
@@ -95,6 +93,6 @@ export class NodeinfoComponent {
   }
   
   ngOnDestroy(){
-    this.eventSubscription.map(e => e.unsubscribe())
+    this.eventSubscription.unsubscribe();
   }
 }

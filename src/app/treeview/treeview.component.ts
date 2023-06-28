@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./treeview.component.scss']
 })
 export class TreeviewComponent {
-  public eventSubscription : Subscription[] = [];
+  public eventSubscription : Subscription = new Subscription();
   public treeNodes: NodeModel[] = []; 
 
   constructor(private nodeService:NodeService){}
@@ -17,7 +17,7 @@ export class TreeviewComponent {
     this.loadTree();
 
     //refresh tree if there's any update in other component
-    this.eventSubscription.push(
+    this.eventSubscription.add(
       this.nodeService.reloadTreeEmit.subscribe(e =>{
         this.loadTree();
       })
@@ -27,7 +27,7 @@ export class TreeviewComponent {
 
   //fetch add tree data to show on treeview
   loadTree(){
-    this.eventSubscription.push(
+    this.eventSubscription.add(
       this.nodeService.getNodeData().subscribe((res)=> {
         this.treeNodes = res;   
       })
@@ -49,6 +49,6 @@ export class TreeviewComponent {
 
   //unsuscrible
   ngOnDestroy(){
-    this.eventSubscription.map(e => e.unsubscribe())
+    this.eventSubscription.unsubscribe();
   }
 }

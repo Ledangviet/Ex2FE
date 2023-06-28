@@ -66,9 +66,6 @@ export class NodeService{
         })
     }
 
-
-
-
     //Get all node attribute by node id
     getNodeAttributeByNodeId(id:string): Observable<NodeAttributeModel[]>{
      return this.httpClient.get<NodeAttributeModel[]>(this.url+"Attribute/id?nodeId="+id);
