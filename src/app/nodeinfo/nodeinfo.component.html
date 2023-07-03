@@ -1,19 +1,22 @@
 <div class="node-container"> 
     <form class="form-info" style="font-size: 12px"  [formGroup]="form" >
       <mat-form-field  class="title-formfield"  appearance="outline">
-        <mat-label>Node Title :</mat-label>
+        <mat-label>Node Title :</mat-label>      
         <input  formControlName="title" matInput >
+        <mat-error *ngIf="this.form.get('title')?.hasError('required')">Node title required!</mat-error>
+        <mat-error
+         *ngIf="!this.form.get('title')?.hasError('required') && this.form.get('title')?.invalid"
+        >Invalid name!</mat-error>       
       </mat-form-field>
       <mat-form-field class="title-formfield" appearance="outline" >
         <mat-label>Node Type :</mat-label>
-        <mat-select formControlName="type">
+        <mat-select (selectionChange)="changeType($event)"  formControlName="type">
           <mat-option *ngFor="let type of types" [value]="type">
             {{type}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-    </form>
-    <app-attributelist ></app-attributelist>
+    </form> 
     <button [disabled]="form.invalid" class="savechange-button" (click)="saveClick()">Update Node</button>
+    <button class="edit-button" *ngIf="!editStatus" (click)="editClick()">Edit Detail</button> 
 </div>
-<div kendoDialogContainer></div>

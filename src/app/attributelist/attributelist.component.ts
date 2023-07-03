@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { NodeService } from '../service/node.service';
-import { NodeAttributeModel } from '../model/NodeAttributeModel';
+import { NodeAttributeModel } from '../model/nodeattribute.model';
 import { State, process } from "@progress/kendo-data-query";
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
@@ -22,13 +22,13 @@ import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-ang
   styleUrls: ['./attributelist.component.scss']
 })
 export class AttributelistComponent {
+
+  @Input() editId:string;
   public nodeId:string;
   public eventSubscription: Subscription = new Subscription();
   public attributes: NodeAttributeModel[] = [];
   public saveAttribute: NodeAttributeModel;
-
   public editingItem = new NodeAttributeModel(0,"",0);
-
   public gridState: State = {
     sort: [],
     skip: 0,
@@ -42,13 +42,16 @@ export class AttributelistComponent {
     private dialogService:DialogService
     ){}
    
-  ngOnInit(){
+  ngOnInit(){ 
+    if(this.editId){
+      this.loadData(this.editId)
+    }  
     this.nodeService.idEmit.subscribe((id)=> {
           this.loadData(id);
     })     
   }
 
-  //sunscrible load data service by node Id
+  //subscrible load node service by node 
   loadData(id:string){
     this.nodeId = id;
     this.eventSubscription.add(this.nodeService.getNodeAttributeByNodeId(this.nodeId).subscribe((res)=>{
@@ -59,8 +62,6 @@ export class AttributelistComponent {
 
   
   onStateChange(state: State){}
-
-
   //cancel editor
   cancelHandler(args: CancelEvent){
     this.closeEditor(args.sender, args.rowIndex);
@@ -80,41 +81,17 @@ export class AttributelistComponent {
 
     this.editedRowIndex = args.rowIndex;
     // put the row in edit mode, with the `FormGroup` build above
-
     args.sender.editRow(args.rowIndex, this.formGroup);
   }
 
 
   //get data from grid action and call save  service
   saveHandler({ sender, rowIndex, formGroup, isNew }: SaveEvent): void{
-
-    //show dialog
-    const dialog: DialogRef = this.dialogService.open({
-      title: "Save Data",
-      content: "Are you sure to save?",
-      actions: [{ text: "Yes" }, { text: "Cancel", themeColor: "tertiary" }],
-      width: 450,
-      height: 200,
-      minWidth: 250,
-    });
-
-    //subscrible dialog's result and handle
-    this.eventSubscription.add(dialog.result.subscribe((result) => {
-      if (result instanceof DialogCloseResult) {
-        return;
-      } else {
-        if(result.text == "Yes"){
-          const attribute: NodeAttributeModel = formGroup.value;
-          this.eventSubscription.add(this.nodeService.save(this.editingItem.id,attribute.name,parseInt(this.nodeId),isNew).subscribe(res=>{
-            this.nodeService.idEmit.emit(this.nodeId);    
-          }))
-          sender.closeRow(rowIndex);
-        }
-        else{
-          return;
-        }
-      }
+    const attribute: NodeAttributeModel = formGroup.value;
+    this.eventSubscription.add(this.nodeService.save(this.editingItem.id,attribute.name,parseInt(this.nodeId),isNew).subscribe(res=>{
+      this.nodeService.idEmit.emit(this.nodeId);    
     }))
+    sender.closeRow(rowIndex);   
   }
 
   //call the remove attribute service
@@ -123,7 +100,7 @@ export class AttributelistComponent {
     const dialog: DialogRef = this.dialogService.open({
       title: "Save Data",
       content: "Are you sure to delete?",
-      actions: [{ text: "Yes" }, { text: "Cancel", themeColor: "tertiary" }],
+      actions: [{ text: "Yes", themeColor: "tertiary"}, { text: "Cancel"}],
       width: 450,
       height: 200,
       minWidth: 250,
@@ -156,7 +133,7 @@ export class AttributelistComponent {
     // define all editable fields validators and default values
     this.formGroup = new FormGroup({    
       id: new FormControl({value:0,disabled:true},),
-      name: new FormControl("", Validators.required),
+      name: new FormControl("", [Validators.required]),
     });
     // show the new row editor, with the `FormGroup` build above
     args.sender.addRow(this.formGroup);

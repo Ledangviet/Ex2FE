@@ -13,6 +13,16 @@
 .mat-mdc-option {  
     font-size: var(--mdc-typography-body1-font-size, 14px);
 }
+.mat-mdc-card-content{
+    padding: 0px 0px 0px 0px !important;
+}
+.mat-mdc-card-header{
+    padding:0px !important;
+    margin-bottom:16px !important;
+}
+.cdk-overlay-container{
+    z-index: 10003;
+}
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

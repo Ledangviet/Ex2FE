@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NodeService } from '../service/node.service';
-import { NodeModel } from '../model/NodeModel';
+import { NodeModel } from '../model/node.model';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -38,7 +38,7 @@ export class TreeviewComponent {
   public iconClass(dataItem:NodeModel): any {
     if(dataItem.nodeType == "1")
       return "insert_drive_file";
-    else return "folder";
+    return "folder";
   }
 
 

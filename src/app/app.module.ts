@@ -18,6 +18,17 @@ import { GridModule } from '@progress/kendo-angular-grid';
 
 import { MaterialModule } from './module/material.module';
 import { DialogModule } from '@progress/kendo-angular-dialog';
+import { HomeComponent } from './home/home.component';
+import { NavigationModule } from '@progress/kendo-angular-navigation';
+import { LoginComponent } from './login/login.component';
+import { CookieService } from 'ngx-cookie-service';
+import { NodeService } from './service/node.service';
+import { AuthenticationService } from './service/authen.service';
+import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
+import { EditComponent } from './edit/edit.component';
+import { ToastrModule } from 'ngx-toastr';
+import { DetailInfoComponent } from './detail-info/detail-info.component';
+
 
 
 @NgModule({
@@ -26,6 +37,10 @@ import { DialogModule } from '@progress/kendo-angular-dialog';
     TreeviewComponent,
     NodeinfoComponent,
     AttributelistComponent,
+    HomeComponent,
+    LoginComponent,
+    EditComponent,
+    DetailInfoComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,10 +55,17 @@ import { DialogModule } from '@progress/kendo-angular-dialog';
     DropDownsModule,
     GridModule,
     MaterialModule,
-    DialogModule
+    DialogModule,
+    NavigationModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter:  (service) => localStorage.getItem('access_token')
+      }
+    }),  
+    ToastrModule.forRoot(), 
   ],
   
-  providers: [],
+  providers: [CookieService , NodeService, AuthenticationService,JwtHelperService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

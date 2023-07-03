@@ -1,8 +1,8 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { NodeModel } from '../model/NodeModel';
-import { NodeAttributeModel } from '../model/NodeAttributeModel';
-import { UpdateNodeModel } from '../model/UpdateNodeModel';
+import { NodeModel } from '../model/node.model';
+import { NodeAttributeModel } from '../model/nodeattribute.model';
+import { UpdateNodeModel } from '../model/updatemodel.model';
 import { Observable } from 'rxjs';
 
 const CREATE_ACTION = "create";
@@ -14,6 +14,7 @@ const REMOVE_ACTION = "destroy";
   })
 
 export class NodeService{
+    public token: string = "";
     private url = 'https://localhost:7277/api/Node'; 
     public idEmit = new EventEmitter();
     public reloadTreeEmit = new EventEmitter();
@@ -44,13 +45,18 @@ export class NodeService{
 
     //get all node data
     getNodeData(): Observable<NodeModel[]>{
-      return this.httpClient.get<NodeModel[]>(this.url);
+      return this.httpClient.get<NodeModel[]>(this.url,{
+        headers: new HttpHeaders({
+          'Authorization': 'Bearer ' + this.token, 
+        })
+      })
     }  
   
     //Get node by Id
     getNodeDataById(id:string): Observable<NodeModel>{      
       return this.httpClient.get<NodeModel>(this.url+"/id",{
-        headers: new HttpHeaders({ 
+        headers: new HttpHeaders({
+          'Authorization': 'Bearer ' + this.token, 
           'id':id
         })
       })
@@ -61,7 +67,8 @@ export class NodeService{
       return this.httpClient.put<NodeModel>(
         this.url,JSON.stringify(nodemodel),{
           headers: new HttpHeaders({ 
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + this.token,
           })
         })
     }
