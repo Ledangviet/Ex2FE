@@ -1,44 +1,50 @@
 <kendo-grid
-      [kendoGridBinding]="attributes"
-      title="Attribute List"   
-      [pageable]="true"
-      [pageSize]="5"
-      [sortable]="true"
-      (dataStateChange)="onStateChange($event)"
-      (edit)="editHandler($event)"
-      (cancel)="cancelHandler($event)"
-      (save)="saveHandler($event)"
-      (remove)="removeHandler($event)"
-      (add)="addHandler($event)"      
-    >
-      <ng-template kendoGridToolbarTemplate>
-        <button kendoGridAddCommand class="themeColor-custom">Add Attribute</button>
-      </ng-template>
-      <kendo-grid-column
-        [headerStyle]="{ 'background-color': 'darkturquoise','color': 'white' }"
-        field="id"
-        title="Id"
-        [width]="70"
-      ></kendo-grid-column>
-      <kendo-grid-column
-        [headerStyle]="{ 'background-color': 'darkturquoise','color': 'white' }"
-        field="name"
-        title="Title"
-        [width]="220"
-      ></kendo-grid-column>        
-      <kendo-grid-command-column
-       [headerStyle]="{ 'background-color': 'darkturquoise','color': 'white' }"
-       title="command" [width]="220"
-       >
-        <ng-template kendoGridCellTemplate let-isNew="isNew">
-          <button kendoGridEditCommand class="themeColor-custom">Edit</button>
-          <button kendoGridRemoveCommand class="themeColor-custom">Remove</button>
-          <button class="themeColor-custom" [disabled]="formGroup.invalid" kendoGridSaveCommand *ngIf="formGroup">
-            {{ isNew ? "Add" : "Update" }}
-          </button>
-          <button class="themeColor-custom" kendoGridCancelCommand>
-            {{ isNew ? "Discard changes" : "Cancel" }}
-          </button>
-        </ng-template>
-      </kendo-grid-command-column>
-    </kendo-grid>
+  [kendoGridBinding]="attributes"
+  title="Attribute List"
+  [pageable]="true"
+  [filterable]="true"
+  [pageSize]="4"
+  [sortable]="true"
+  (dataStateChange)="onStateChange($event)"
+  (edit)="editHandler($event)"
+  (cancel)="cancelHandler($event)"
+  (save)="saveHandler($event)"
+  (remove)="removeHandler($event)"
+  (add)="addHandler($event)"
+>
+  <ng-template kendoGridToolbarTemplate>
+    <button kendoGridAddCommand class="themeColor-custom">Add Attribute</button>
+  </ng-template>
+  <kendo-grid-column
+    [headerStyle]="{ 'background-color': 'darkturquoise', color: 'white' }"
+    field="id"
+    title="Id"
+    [width]="120"
+  ></kendo-grid-column>
+  <kendo-grid-column
+    [headerStyle]="{ 'background-color': 'darkturquoise', color: 'white' }"
+    field="name"
+    title="Title"
+  ></kendo-grid-column>
+  <kendo-grid-command-column
+    [headerStyle]="{ 'background-color': 'darkturquoise', color: 'white' }"
+    title="command"
+    [width]="220"
+  >
+    <ng-template kendoGridCellTemplate let-isNew="isNew">
+      <button kendoGridEditCommand class="themeColor-custom">Edit</button>
+      <button kendoGridRemoveCommand class="themeColor-custom">Remove</button>
+      <button
+        class="themeColor-custom"
+        [disabled]="formGroup.invalid"
+        kendoGridSaveCommand
+        *ngIf="formGroup"
+      >
+        {{ isNew ? "Add" : "Update" }}
+      </button>
+      <button class="themeColor-custom" kendoGridCancelCommand>
+        {{ isNew ? "Discard changes" : "Cancel" }}
+      </button>
+    </ng-template>
+  </kendo-grid-command-column>
+</kendo-grid>

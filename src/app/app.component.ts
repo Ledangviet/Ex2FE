@@ -9,6 +9,6 @@ export class AppComponent {
   public types: Array<string> = [
     "Folder",
     "File"
- ];
+  ];
   title = 'Excercise2_FE';
 }

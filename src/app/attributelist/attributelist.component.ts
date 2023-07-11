@@ -15,6 +15,7 @@ import {
 } from "@progress/kendo-angular-grid";
 import { Subscription } from 'rxjs';
 import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-angular-dialog';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-attributelist',
@@ -23,59 +24,59 @@ import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-ang
 })
 export class AttributelistComponent {
 
-  @Input() editId:string;
-  public nodeId:string;
+  @Input() editId: string;
+  public nodeId: string;
   public eventSubscription: Subscription = new Subscription();
   public attributes: NodeAttributeModel[] = [];
   public saveAttribute: NodeAttributeModel;
-  public editingItem = new NodeAttributeModel(0,"",0);
-  public gridState: State = {
-    sort: [],
-    skip: 0,
-    take: 5,
-  };
-  public formGroup:FormGroup;
+  public editingItem = new NodeAttributeModel(0, "", 0);
+  
+  public formGroup: FormGroup;
   private editedRowIndex: number;
 
   constructor(
-    private nodeService:NodeService,
-    private dialogService:DialogService
-    ){}
-   
-  ngOnInit(){ 
-    if(this.editId){
+    private nodeService: NodeService,
+    private dialogService: DialogService,
+    private toastr:ToastrService
+  ) { }
+
+  ngOnInit() {
+    if (this.editId) {
       this.loadData(this.editId)
-    }  
-    this.nodeService.idEmit.subscribe((id)=> {
-          this.loadData(id);
-    })     
+    }
+    this.nodeService.idEmit.subscribe((id) => {
+      this.loadData(id);
+    })
   }
 
   //subscrible load node service by node 
-  loadData(id:string){
+  loadData(id: string) {
     this.nodeId = id;
-    this.eventSubscription.add(this.nodeService.getNodeAttributeByNodeId(this.nodeId).subscribe((res)=>{
-      this.attributes = res;            
+    this.eventSubscription.add(this.nodeService.getNodeAttributeByNodeId(this.nodeId).subscribe((res) => {
+      this.attributes = res;
     }))
-      
+
   }
 
-  
-  onStateChange(state: State){}
+
+  onStateChange(state: State) { }
   //cancel editor
-  cancelHandler(args: CancelEvent){
+  cancelHandler(args: CancelEvent) {
     this.closeEditor(args.sender, args.rowIndex);
   }
 
-  //add a row to edit row item
-  editHandler(args: EditEvent){
+  /**
+   * add a row to edit row item
+   * @param args 
+   */
+  editHandler(args: EditEvent) {
 
     const { dataItem } = args;
     this.editingItem = dataItem;
     this.closeEditor(args.sender);
 
-    this.formGroup = new FormGroup({    
-      id: new FormControl({value:this.editingItem.id,disabled:true}),
+    this.formGroup = new FormGroup({
+      id: new FormControl({ value: this.editingItem.id, disabled: true }),
       name: new FormControl(this.editingItem.name, Validators.required),
     });
 
@@ -85,13 +86,16 @@ export class AttributelistComponent {
   }
 
 
-  //get data from grid action and call save  service
-  saveHandler({ sender, rowIndex, formGroup, isNew }: SaveEvent): void{
+  /**
+   * get data from grid action and call save service
+   * @param param0 
+   */
+  saveHandler({ sender, rowIndex, formGroup, isNew }: SaveEvent): void {
     const attribute: NodeAttributeModel = formGroup.value;
-    this.eventSubscription.add(this.nodeService.save(this.editingItem.id,attribute.name,parseInt(this.nodeId),isNew).subscribe(res=>{
-      this.nodeService.idEmit.emit(this.nodeId);    
+    this.eventSubscription.add(this.nodeService.save(this.editingItem.id, attribute.name, parseInt(this.nodeId), isNew).subscribe(res => {
+      this.nodeService.idEmit.emit(this.nodeId);
     }))
-    sender.closeRow(rowIndex);   
+    sender.closeRow(rowIndex);
   }
 
   //call the remove attribute service
@@ -100,7 +104,7 @@ export class AttributelistComponent {
     const dialog: DialogRef = this.dialogService.open({
       title: "Save Data",
       content: "Are you sure to delete?",
-      actions: [{ text: "Yes", themeColor: "tertiary"}, { text: "Cancel"}],
+      actions: [{ text: "Yes", themeColor: "tertiary" }, { text: "Cancel" }],
       width: 450,
       height: 200,
       minWidth: 250,
@@ -111,28 +115,31 @@ export class AttributelistComponent {
       if (result instanceof DialogCloseResult) {
         return;
       } else {
-        if(result.text == "Yes"){
+        if (result.text == "Yes") {
           this.eventSubscription.add(this.nodeService.remove(args.dataItem).subscribe(res => {
-            alert("Delete sucessful!")
-            this.nodeService.idEmit.emit(this.nodeId);
+            this.toastr.success("Delete succeeded!");
+            this.loadData(this.nodeId);
           }))
         }
-        else{
+        else {
           return;
         }
       }
     }))
-    
-    
+
+
   }
 
-  
-  //add a form row to add new attribute with the same nodeId
-  addHandler(args: AddEvent){
+
+  /**
+   * add a form row to add new attribute with the same nodeId
+   * @param args 
+   */
+  addHandler(args: AddEvent) {
     this.closeEditor(args.sender);
     // define all editable fields validators and default values
-    this.formGroup = new FormGroup({    
-      id: new FormControl({value:0,disabled:true},),
+    this.formGroup = new FormGroup({
+      id: new FormControl({ value: 0, disabled: true },),
       name: new FormControl("", [Validators.required]),
     });
     // show the new row editor, with the `FormGroup` build above
@@ -146,7 +153,7 @@ export class AttributelistComponent {
     this.editedRowIndex = 0;
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.eventSubscription.unsubscribe();
   }
 }

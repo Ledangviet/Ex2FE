@@ -25,7 +25,9 @@ export class TreeviewComponent {
   }
 
 
-  //fetch add tree data to show on treeview
+  /**
+   * load new tree form
+   */
   loadTree(){
     this.eventSubscription.add(
       this.nodeService.getNodeData().subscribe((res)=> {
@@ -34,16 +36,23 @@ export class TreeviewComponent {
     ) 
   }
 
-  //define name for mat icon by nodeType
+  /**
+   * define name for mat icon by nodeType
+   * @param dataItem 
+   * @returns 
+   */
+  
   public iconClass(dataItem:NodeModel): any {
     if(dataItem.nodeType == "1")
       return "insert_drive_file";
     return "folder";
   }
 
-
-  //binding selected node's id to other component through service's "idEmit"
+  /**
+   * binding selected node's id to other component through service's "idEmit"
+   */  
   nodeClick(arg:any): void{
+
     this.nodeService.idEmit.emit(arg.dataItem.id);    
   }
 
