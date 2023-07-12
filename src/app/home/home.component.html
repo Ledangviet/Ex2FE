@@ -1,0 +1,13 @@
+<h1 class="title">
+  TreeView
+  <p class="name">{{userName}}</p>
+  <button (click)="logoutClick()" routerLink="/login" class="login-button">{{ loginContent }}</button>
+</h1>
+<div class="app-container">
+  <app-treeview></app-treeview>
+  <div class="space"></div>
+  <div class="info-container">
+    <app-nodeinfo></app-nodeinfo>
+    <app-attributelist></app-attributelist>
+  </div>
+</div>

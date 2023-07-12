@@ -1,0 +1,13 @@
+<div class="edit-container">
+   <mat-tab-group>
+    <mat-tab label="Information">
+      <div class="edit-info"></div>
+      <app-detail-info [nodeId]="this.nodeId"></app-detail-info>
+    </mat-tab>
+    <mat-tab label="Attribute">
+      <div class="edit-info"></div>
+      <app-attributelist [editId]="nodeId"></app-attributelist>
+    </mat-tab>
+  </mat-tab-group>
+  <button (click)="closeDialog()" class="close-button">Close</button>
+</div>

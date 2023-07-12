@@ -1,0 +1,57 @@
+<div class="node-container">
+  <form class="form-info" style="font-size: 12px" [formGroup]="form">
+    <!-- Title form field -->
+    <mat-form-field class="title-formfield" appearance="outline">
+      <mat-label>Node Title :</mat-label>
+      <input formControlName="title" matInput />
+      <mat-error *ngIf="this.form.get('title')?.hasError('required')"
+        >Node title required!</mat-error
+      >
+      <mat-error
+        *ngIf="
+          !this.form.get('title')?.hasError('required') &&
+          this.form.get('title')?.invalid
+        "
+        >Invalid name!</mat-error
+      >
+    </mat-form-field>
+
+    <!-- type form field -->
+    <mat-form-field class="title-formfield" appearance="outline">
+      <mat-label>Node Type :</mat-label>
+      <mat-select formControlName="type">
+        <mat-option *ngFor="let type of types" [value]="type">
+          {{ type }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- submit date form field -->
+    <mat-form-field class="title-formfield" appearance="outline">
+      <mat-label>Submission Date :</mat-label>
+      <input formControlName="submitdate" [matDatepicker]="picker" matInput />
+
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="this.form.get('submitdate')?.hasError('required')"
+        >Node title required!</mat-error
+      >
+    </mat-form-field>
+
+    <!-- Owner form field -->
+    <mat-form-field class="title-formfield" appearance="outline">
+      <mat-label>Owner :</mat-label>
+      <input formControlName="owner" matInput />
+      <mat-error *ngIf="this.form.get('owner')?.hasError('required')"
+        >Node title required!</mat-error
+      >
+    </mat-form-field>
+  </form>
+  <button
+    [disabled]="this.form.invalid"
+    class="save-button"
+    (click)="saveClick()"
+  >
+    Save
+  </button>
+</div>

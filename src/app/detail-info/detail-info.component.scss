@@ -1,0 +1,30 @@
+.form-info{
+    display:flex;
+    flex-direction: column;
+    font-size: 12px;
+}
+
+.title-formfield{
+    margin-bottom:20px;
+    width: 500px;
+    height: 60px;
+}
+.save-button{   
+    width: 120px;
+    height: 30px;
+    border:0px ;
+    border-radius: 5px;
+    background-color: darkturquoise;
+    color: white;
+    margin-left: 260px;
+}
+.cancel-button{
+    position: absolute;
+    width: 120px;
+    height: 30px;
+    border:0px ;
+    border-radius: 5px;
+    background-color: darkturquoise;
+    color: white;
+    left:360px;   
+}

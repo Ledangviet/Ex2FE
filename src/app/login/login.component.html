@@ -1,0 +1,103 @@
+<div class="login-wrapper" fxLayout="row" fxLayoutAlign="center center">
+  <mat-card *ngIf="loginStatus" class="box">
+    <mat-card-header>
+      <mat-card-title style="color: darkturquoise">Login</mat-card-title>
+    </mat-card-header>
+    <form class="example-form" [formGroup]="form">
+      <mat-card-content>
+        <mat-form-field class="example-full-width" appearance="outline">
+          <input placeholder="Email" formControlName="email" matInput />
+          <mat-error *ngIf="this.form.get('email')?.hasError('email')"
+            >Invalid email!</mat-error
+          >
+          <mat-error *ngIf="this.form.get('email')?.hasError('required')"
+            >Email required!</mat-error
+          >
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width" appearance="outline">
+          <input type="password" placeholder="Password" formControlName="password" matInput />
+          <mat-error *ngIf="this.form.get('password')?.hasError('required')"
+            >Password required!</mat-error
+          >
+        </mat-form-field>
+      </mat-card-content>
+      <button
+        (click)="loginClick()"
+        [disabled]="form.invalid"
+        mat-stroked-button
+        style="background-color: darkturquoise; color: white; margin-top: 10px"
+        class="btn-block"
+      >
+        Log in
+      </button>
+      <span (click)="createClick()" class="create-link">Create account?</span>
+    </form>
+  </mat-card>
+
+  <mat-card *ngIf="!loginStatus" class="box">
+    <mat-card-header>
+      <mat-card-title style="color: darkturquoise">Register</mat-card-title>
+    </mat-card-header>
+    <form class="example-form" [formGroup]="registerform">
+      <mat-card-content>
+        <mat-form-field class="example-full-width" appearance="outline">
+          <input placeholder="Email" formControlName="email" matInput />
+          <mat-error *ngIf="this.form.get('email')?.hasError('email')"
+            >Invalid email!</mat-error
+          >
+          <mat-error *ngIf="this.form.get('email')?.hasError('required')"
+            >Email required!</mat-error
+          >
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width" appearance="outline">
+          <input placeholder="Username" formControlName="username" matInput />
+          <mat-error
+            *ngIf="this.registerform.get('username')?.hasError('required')"
+            >Usename required!</mat-error
+          >
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width" appearance="outline">
+          <input
+            placeholder="Phonenumber"
+            formControlName="phonenumber"
+            matInput
+          />
+          <mat-error
+            *ngIf="this.registerform.get('phonenumber')?.hasError('required')"
+            >Phone number required!</mat-error
+          >
+          <mat-error
+            *ngIf="
+              this.registerform.get('phonenumber')?.invalid &&
+              !this.registerform.get('phonenumber')?.hasError('required')
+            "
+            >Invalid phonenumber!</mat-error
+          >
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width" appearance="outline">
+          <input type="password" placeholder="Password" formControlName="password" matInput />
+          <mat-error
+            *ngIf="this.registerform.get('password')?.hasError('required')"
+            >Password required!</mat-error
+          >
+        </mat-form-field>
+      </mat-card-content>
+      <button
+        (click)="loginClick()"
+        [disabled]="registerform.invalid"
+        mat-stroked-button
+        style="background-color: darkturquoise; color: white; margin-top: 10px"
+        class="btn-block"
+      >
+        SignUp
+      </button>
+      <span (click)="createClick()" class="create-link"
+        >Already have account?</span
+      >
+    </form>
+  </mat-card>
+</div>
