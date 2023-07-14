@@ -17,10 +17,12 @@ const REMOVE_ACTION = "destroy";
 export class NodeService {
   public token: string = this.cookieService.get('accesstoken');
   private url = 'https://localhost:7277/api/Node';
+  
   public idEmit = new EventEmitter();
   public reloadTreeEmit = new EventEmitter();
   public closeDialogEmit = new EventEmitter();
   public nodeClickEmit = new EventEmitter();
+  public lazyLoadEmit = new EventEmitter();
 
   constructor(
     private httpClient: HttpClient,
@@ -81,8 +83,6 @@ export class NodeService {
    * @returns 
    */
   updateNodeData(nodemodel: UpdateNodeModel): Observable<UpdateResponseModel> {
-    console.log('service', nodemodel);
-
     return this.httpClient.put<UpdateResponseModel>(
       this.url, JSON.stringify(nodemodel), {
       headers: new HttpHeaders({

@@ -16,14 +16,7 @@ import { ToastrService } from 'ngx-toastr';
 
 export class NodeinfoComponent {
 
-  @HostListener ('window:beforeunload',['$event'])
-  handlePageRefresh(event:Event){
-    if(this.form.dirty) return false;
-    return true;
-  }
-
   public updateState = false;
-
   public eventSubscription: Subscription = new Subscription();
   public types: Array<string> = [
     "Folder",
@@ -41,6 +34,12 @@ export class NodeinfoComponent {
 
   public pattern: any;
 
+  @HostListener ('window:beforeunload',['$event'])
+  handlePageRefresh(event:Event){
+    if(this.form.dirty) return false;
+    return true;
+  }
+
   constructor(
     private dialogService: DialogService,
     private nodeService: NodeService,
@@ -54,9 +53,6 @@ export class NodeinfoComponent {
       this.nodeService.idEmit.subscribe(id => {
 
         if (this.form.dirty && !this.updateState) {
-
-          console.log('aaaa');
-
           const dialog: DialogRef = this.dialogService.open({
             title: "Data hasn't been save!",
             content: "Do you want to update?",
@@ -95,7 +91,6 @@ export class NodeinfoComponent {
               )
             }
           }))
-
         } else {
           this.nodeId = id
           this.eventSubscription.add(
@@ -121,6 +116,12 @@ export class NodeinfoComponent {
 
       })
     );
+
+    this.eventSubscription.add(
+      this.form.valueChanges.subscribe(() => {
+        this.updateState = false;
+      }))
+    
   }
 
   changeType(arg: any) {
@@ -130,6 +131,8 @@ export class NodeinfoComponent {
 
   
   saveClick() {
+    console.log('status',this.updateState);
+    
     //logic validate
     if (this.nodeData.nodeType == "Folder" && this.form.value.type == "File") {
       this.toastr.error("Folder can't update to File!")
@@ -157,7 +160,9 @@ export class NodeinfoComponent {
       this.eventSubscription.add(
         this.nodeService.updateNodeData(updateNodeModel).subscribe((res: UpdateResponseModel) => {
           this.toastr.success("Update Succeeded!");
-          this.nodeService.reloadTreeEmit.emit(res);
+          //this.nodeService.reloadTreeEmit.emit(res);
+          this.updateState = true;
+          this.nodeService.lazyLoadEmit.emit(res);
         })
       )
     }

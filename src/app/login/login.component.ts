@@ -46,13 +46,14 @@ export class LoginComponent {
    * Login and set login info to cookie if success
    */
   loginClick() {
-    if (this.loginStatus == true) {
+    if (this.loginStatus == true) {          
       if (this.form.value.email && this.form.value.password) {
         this.model = new SignInModel(this.form.value.email, this.form.value.password);
+
         this.eventSubscription.add(this.authenService.login(this.model).subscribe((res: SignInResponseModel) => {
           this.loginData = res;
           if (this.loginData.succeeded == false) {
-            this.toastr.success(this.loginData.status);
+            this.toastr.warning(this.loginData.status);
             return;
           }
          
@@ -81,6 +82,7 @@ export class LoginComponent {
           this.registerform.value.password
         )
       }
+      
       
       //call register api if loginState is false
       this.eventSubscription.add(this.authenService.register(this.registerModel).subscribe((res: SignUpResponseModel) => {

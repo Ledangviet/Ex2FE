@@ -5,6 +5,7 @@ import { Observable, take,lastValueFrom } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ToastrService } from 'ngx-toastr';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable({
     providedIn: 'root'
@@ -119,5 +120,13 @@ export class AuthenticationService {
         this.cookieService.delete("accesstoken");
         this.cookieService.delete("username");
         this.cookieService.delete("refreshtoken");
+    }
+
+    enCrypt(data:SignInModel){
+        var key = CryptoJS.enc.Base64.parse("1111111111111111111111111111111111111111111");
+        var v = CryptoJS.enc.Base64.parse("1111111111111111111111111111111111111111111");
+        console.log(key);
+        console.log(v);            
+        return CryptoJS.AES.encrypt(JSON.stringify(data),key,{ iv:v}).toString();
     }
 }

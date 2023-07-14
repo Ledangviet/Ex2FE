@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NodeService } from '../service/node.service';
 import { NodeModel, UpdateResponseModel } from '../model/node.model';
-import { Subscription, subscribeOn } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-angular-dialog';
 import { UpdateNodeModel } from '../model/updatemodel.model';
 import { ToastrService } from 'ngx-toastr';
@@ -23,7 +23,7 @@ export class DetailInfoComponent {
     "Folder",
     "File"
   ];
-  
+
   public form = new FormGroup({
     title: new FormControl("title", [Validators.required]),
     type: new FormControl("type", [Validators.required]),
@@ -38,8 +38,8 @@ export class DetailInfoComponent {
     private dialogService: DialogService
   ) { }
 
-  ngOnInit() {
 
+  ngOnInit() {
     this.eventSub.add(this.nodeService.closeDialogEmit.subscribe(res => {
       this.closeClick()
     }))
@@ -108,7 +108,8 @@ export class DetailInfoComponent {
           if (res.succeed == true) {
             this.toastr.success("Update Succeed!")
             this.nodeService.idEmit.emit(this.nodeData.id);
-            this.nodeService.reloadTreeEmit.emit();
+
+            this.nodeService.lazyLoadEmit.emit(res.nodeModel);
           } else {
             this.toastr.error("Update Fail!")
           }
