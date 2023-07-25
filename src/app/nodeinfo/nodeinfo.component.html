@@ -24,15 +24,22 @@
     </mat-form-field>
   </form>
   <button
-    [disabled]="this.form.invalid || !this.form.dirty || this.updateState"
-    class="savechange-button"
+    [disabled]="this.form.invalid || !this.form.dirty || this.updateState || this.addStatus"
+    class="savechange-button main-color"
     (click)="saveClick()"
   >
     Update Node
   </button>
   <button
+    [disabled]="this.form.invalid || !this.addStatus"
+    class="add-button main-color"
+    (click)="addClick()"
+  >
+    Add Node
+  </button>
+  <button
     [disabled]="this.nodeId == '0'"
-    class="edit-button"
+    class="edit-button main-color"
     (click)="editClick()"
   >
     Edit Detail

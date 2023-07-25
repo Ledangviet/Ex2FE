@@ -1,13 +1,13 @@
 <h1 class="title">
-  TreeView
+  <button (click)="openApplication()" class="application-button main-color">Open Application</button>
   <p class="name">{{userName}}</p>
-  <button (click)="logoutClick()" routerLink="/login" class="login-button">{{ loginContent }}</button>
+  <button (click)="logoutClick()" routerLink="/login" class="login-button main-color">{{ loginContent }}</button>
 </h1>
 <div class="app-container">
   <app-treeview></app-treeview>
   <div class="space"></div>
   <div class="info-container">
     <app-nodeinfo></app-nodeinfo>
-    <app-attributelist></app-attributelist>
+    <app-attributelist ></app-attributelist>
   </div>
 </div>

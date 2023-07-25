@@ -1,14 +1,16 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { NodeModel, UpdateResponseModel } from '../model/node.model';
-import { NodeAttributeModel } from '../model/nodeattribute.model';
-import { UpdateNodeModel } from '../model/updatemodel.model';
+import { NodeModel} from '../model/node/node.model';
+import { NodeAttributeModel } from '../model/nodeattribute/nodeattribute.model';
+import { UpdateNodeModel } from '../model/node/updatenode.model';
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
+import { AuthenticationService } from './authen.service';
+import { AddNodeModel } from '../model/node/addnode.model';
+import { UpdateResponseModel } from '../model/node/updateresponse.model';
 
 const CREATE_ACTION = "create";
 const UPDATE_ACTION = "update";
-const REMOVE_ACTION = "destroy";
 
 @Injectable({
   providedIn: 'root'
@@ -17,16 +19,22 @@ const REMOVE_ACTION = "destroy";
 export class NodeService {
   public token: string = this.cookieService.get('accesstoken');
   private url = 'https://localhost:7277/api/Node';
-  
+
+  public currentIndex: [];
+
+  public gridEmit = new EventEmitter();
   public idEmit = new EventEmitter();
   public reloadTreeEmit = new EventEmitter();
   public closeDialogEmit = new EventEmitter();
   public nodeClickEmit = new EventEmitter();
   public lazyLoadEmit = new EventEmitter();
+  public addNodeEmit = new EventEmitter();
+  
 
   constructor(
     private httpClient: HttpClient,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private authenService: AuthenticationService,
   ) { }
 
   //format data form enum to string / reserve
@@ -57,11 +65,37 @@ export class NodeService {
    */
   getNodeData(): Observable<NodeModel[]> {
     return this.httpClient.get<NodeModel[]>(this.url, {
-      headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + this.token,
-      })
+      headers: this.authenService.header
     })
   }
+
+  /**
+   * Get node by application id
+   * @param id 
+   * @returns 
+   */
+  getNodeByApplicationId(id: number): Observable<NodeModel[]> {
+    return this.httpClient.get<NodeModel[]>(this.url + "/application?id=" + id, {
+      headers: this.authenService.header
+    })
+  }
+
+  addNode(model: AddNodeModel) : Observable<NodeModel>{
+    return this.httpClient.post<NodeModel>(this.url,model,{headers: this.authenService.header})
+  }
+
+
+  /**
+   * remove node by aplication id
+   * @param id 
+   * @returns 
+   */
+  removeNodeByApplicationId(id: number): Observable<boolean> {
+    return this.httpClient.put<boolean>(this.url + "/deletenodebyappllicationid", id, {
+      headers: this.authenService.header
+    })
+  }
+
 
   /**
    * Call Get Node Data Api
@@ -71,9 +105,10 @@ export class NodeService {
   getNodeDataById(id: string): Observable<NodeModel> {
     return this.httpClient.get<NodeModel>(this.url + "/id", {
       headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + this.token,
-        'id': id
-      })
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.cookieService.get('accesstoken'),
+        'id': id,
+    })
     })
   }
 
@@ -85,10 +120,7 @@ export class NodeService {
   updateNodeData(nodemodel: UpdateNodeModel): Observable<UpdateResponseModel> {
     return this.httpClient.put<UpdateResponseModel>(
       this.url, JSON.stringify(nodemodel), {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.token,
-      })
+      headers: this.authenService.header
     })
   }
 
@@ -96,6 +128,8 @@ export class NodeService {
   getNodeAttributeByNodeId(id: string): Observable<NodeAttributeModel[]> {
     return this.httpClient.get<NodeAttributeModel[]>(this.url + "Attribute/id?nodeId=" + id);
   }
+
+
 
   //update node attribute
   updateNodeAttribute(model: NodeAttributeModel): Observable<NodeAttributeModel> {
@@ -105,6 +139,8 @@ export class NodeService {
 
   //add node attribute
   addNodeAttribute(model: NodeAttributeModel): Observable<NodeAttributeModel[]> {
+    console.log(model);
+    
     return this.httpClient.post<NodeAttributeModel[]>(this.url + "Attribute", model);
   }
 
@@ -113,14 +149,12 @@ export class NodeService {
     const action = isNew ? CREATE_ACTION : UPDATE_ACTION;
     //this one will add new attribute 
     if (action == "create") {
-      console.log('create service!');
       var model = new NodeAttributeModel(0, data, nodeId);
       return this.httpClient.post<NodeAttributeModel[]>(this.url + "Attribute", model);
     }
     //this one will update node attribute
     if (action == "update") {
       var model = new NodeAttributeModel(id, data, nodeId);
-      console.log(model);
       return this.httpClient.put<NodeAttributeModel>(this.url + "Attribute", model);
     }
     return new Observable;

@@ -13,8 +13,8 @@ export class EditComponent {
   }
 
   closeDialog(){
-    console.log('close');  
-    this.nodeService.closeDialogEmit.emit()
+    this.nodeService.closeDialogEmit.emit();
+    this.nodeService.gridEmit.emit(this.nodeId);
   }
 
   ngOnDestroy() {

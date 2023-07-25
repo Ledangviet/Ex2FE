@@ -1,0 +1,12 @@
+<div class="form-container">
+    <form [formGroup]="form">
+        <mat-form-field class="title-formfield" appearance="outline">
+          <mat-label>{{info}}</mat-label>
+          <input formControlName="text" matInput />
+          <mat-error *ngIf="this.form.invalid"
+            >{{info}} required!</mat-error>
+        </mat-form-field>
+        <button class="btn" [disabled]="this.form.invalid" (click)="buttonClick()">{{btn}}</button>
+      </form>
+</div>
+

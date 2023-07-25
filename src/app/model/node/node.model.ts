@@ -1,4 +1,4 @@
-export class NodeModel {
+export class NodeModel {   
     constructor(
         id: number,
         name: string,
@@ -6,7 +6,8 @@ export class NodeModel {
         parrentId: number,
         submissionDate: Date,
         childs: NodeModel[],
-        owner: string
+        owner: string,
+        applicationId: number
     ) {
         this.id = id;
         this.name = name;
@@ -15,6 +16,7 @@ export class NodeModel {
         this.childs = childs;
         this.submissionDate = submissionDate;
         this.owner = owner;
+        this.applicationId = applicationId;
     }
     public id: number;
     public name: string;
@@ -23,10 +25,6 @@ export class NodeModel {
     public childs: NodeModel[];
     public submissionDate: Date;
     public owner: string;
+    public applicationId: number;
 }
 
-export class UpdateResponseModel {
-    public succeed: boolean;
-    public status: string;
-    public nodeModel: NodeModel;
-}

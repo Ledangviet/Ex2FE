@@ -29,6 +29,14 @@
 .mat-mdc-tab-body.mat-mdc-tab-body-active{
     height: 370px;
 }
+.mdc-notched-outline{
+    top:3px !important;
+}
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: "Roboto", "Helvetica Neue", sans-serif; }
+
+.main-color{
+    background-color: darkblue;
+    color: white;
+}

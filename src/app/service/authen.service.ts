@@ -1,11 +1,17 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
-import { GetTokenResponse, SignInModel, SignInResponseModel, SignUpModel, SignUpResponseModel, TokenModel } from '../model/authen.model';
+
 import { Observable, take,lastValueFrom } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ToastrService } from 'ngx-toastr';
 import * as CryptoJS from 'crypto-js';
+import { TokenModel } from '../model/authentication/token.model';
+import { GetTokenResponse } from '../model/authentication/gettokenresponse.model';
+import { SignInModel } from '../model/authentication/signin.model';
+import { SignInResponseModel } from '../model/authentication/signinresponse.model';
+import { SignUpModel } from '../model/authentication/signup.model';
+import { SignUpResponseModel } from '../model/authentication/signupresonse.model';
 
 @Injectable({
     providedIn: 'root'
@@ -13,6 +19,10 @@ import * as CryptoJS from 'crypto-js';
 
 export class AuthenticationService {
 
+    public header = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.cookieService.get('accesstoken'),
+    })
     public token = '';
     public userName = '';
     private url = "https://localhost:7277/";
@@ -21,11 +31,20 @@ export class AuthenticationService {
         private httpClient: HttpClient,
         private cookieService: CookieService,
         private helper: JwtHelperService,
-        private toastr: ToastrService
     ) { }
 
     ngOnInit(){
 
+    }
+
+    /**
+     * Refresh base header 
+     */
+    refreshToken(){             
+        this.header = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + this.cookieService.get('accesstoken'),
+        })
     }
 
     /**
@@ -42,7 +61,6 @@ export class AuthenticationService {
             return true;
         }
         //send request if token is expired
-        console.log("request new token");
         
         var model = new TokenModel();
         model.accessToken = this.token;
@@ -57,24 +75,13 @@ export class AuthenticationService {
         if(resmodel.status == true)
         return true;
         return false;
-
-
-        //do some thing while waiting the request
-
-        // .pipe(take(1)).subscribe((res: GetTokenResponse) => {
-        //     if (res.status == true) {
-        //         this.cookieService.set('accesstoken', res.token);
-        //         this.token = res.token;
-        //         return true;
-        //     }
-        //     this.toastr.error(res.statusMessage);
-        //     return false;
-        // })
     }
 
-    clearSession(){
-        console.log(this.cookieService.get("accesstoken"));
-        
+    /**
+     * Clear login session
+     * @returns 
+     */
+    clearSession(){       
         return this.httpClient.put(this.url+"api/Authentication/signout",{},{
             headers: new HttpHeaders({
               'Authorization': 'Bearer ' + this.cookieService.get("accesstoken")
@@ -114,19 +121,10 @@ export class AuthenticationService {
      * remove login info from cookie
      */
     logOut() {    
-        this.clearSession().subscribe(res => {
-            console.log(res);          
+        this.clearSession().subscribe(res => {       
         });
         this.cookieService.delete("accesstoken");
         this.cookieService.delete("username");
         this.cookieService.delete("refreshtoken");
-    }
-
-    enCrypt(data:SignInModel){
-        var key = CryptoJS.enc.Base64.parse("1111111111111111111111111111111111111111111");
-        var v = CryptoJS.enc.Base64.parse("1111111111111111111111111111111111111111111");
-        console.log(key);
-        console.log(v);            
-        return CryptoJS.AES.encrypt(JSON.stringify(data),key,{ iv:v}).toString();
     }
 }

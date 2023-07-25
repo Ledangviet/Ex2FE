@@ -1,0 +1,70 @@
+<div class="applicaton-container">
+  <div class="application-grid">
+
+    <customgrid
+    title="Application List"
+    [columnlist]="columnData"
+    [sourceData]="appData"
+    [filterable]="true"
+    [pagesize]="4"
+    [pageable]="true"
+    [actionlist]="action"
+    [sortable]="true"
+    [selectable]="true"
+    (removeEvent)="removeApp($event)"
+    (selection)="selectApp($event)"
+    ></customgrid>
+    <!-- <kendo-grid
+      [kendoGridBinding]="appData"
+      title="Attribute List"
+      [pageable]="true"
+      [filterable]="true"
+      [pageSize]="4"
+      [sortable]="true"
+      [selectable]="true"
+      (remove)="removeApp($event)"
+      (selectionChange)="selectApp($event)"
+    >
+      <kendo-grid-column
+        [headerStyle]="{ 'background-color': 'darkblue', color: 'white' }"
+        field="id"
+        title="Id"
+        [width]="50"
+      ></kendo-grid-column>
+      <kendo-grid-column
+        [headerStyle]="{ 'background-color': 'darkblue', color: 'white' }"
+        field="name"
+        title="Title"
+      ></kendo-grid-column>
+      <kendo-grid-column
+        [headerStyle]="{ 'background-color': 'darkblue', color: 'white' }"
+        field="owner"
+        title="Owner"
+      ></kendo-grid-column>
+      <kendo-grid-command-column
+        [headerStyle]="{ 'background-color': 'darkblue', color: 'white' }"
+        title="command"
+        [width]="120"
+      >
+        <ng-template kendoGridCellTemplate let-isNew="isNew">
+          <button kendoGridRemoveCommand class="themeColor-custom">
+            Remove
+          </button>
+        </ng-template>
+      </kendo-grid-command-column>
+    </kendo-grid>   -->
+  </div>
+  <div class="button-group">
+    <button (click)="newClick()" class="button-action new-button">
+      New Application
+    </button>
+    <button
+      [disabled]="this.selectedApp == undefined"
+      (click)="openClick()"
+      class="button-action"
+    >
+      Open
+    </button>
+    <button (click)="closeDialog()" class="button-action">Close</button>
+  </div> 
+</div>

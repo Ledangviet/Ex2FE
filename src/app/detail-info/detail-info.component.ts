@@ -1,11 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NodeService } from '../service/node.service';
-import { NodeModel, UpdateResponseModel } from '../model/node.model';
+import { NodeModel, UpdateResponseModel } from '../model/node/node.model';
 import { Subscription } from 'rxjs';
 import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-angular-dialog';
-import { UpdateNodeModel } from '../model/updatemodel.model';
+import { UpdateNodeModel } from '../model/node/updatenode.model';
 import { ToastrService } from 'ngx-toastr';
+import { ApplicationService } from '../service/application.service';
 
 @Component({
   selector: 'app-detail-info',
@@ -35,7 +36,8 @@ export class DetailInfoComponent {
     private nodeService: NodeService,
     private dialog: DialogRef,
     private toastr: ToastrService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private appService:ApplicationService,
   ) { }
 
 
@@ -50,10 +52,12 @@ export class DetailInfoComponent {
         this.nodeService.getNodeDataById(this.nodeId).subscribe(res => {
           this.nodeData = this.nodeService.FormatData(res);
           this.form = new FormGroup({
-            title: new FormControl(this.nodeData.name, [Validators.required]),
+            title: new FormControl(this.nodeData.name, [Validators.required,
+              Validators.maxLength(50)]),
             type: new FormControl(this.nodeData.nodeType, [Validators.required]),
             submitdate: new FormControl(this.nodeData.submissionDate.toString().slice(0, 10), [Validators.required]),
-            owner: new FormControl(this.nodeData.owner, [Validators.required]),
+            owner: new FormControl(this.nodeData.owner, [Validators.required,
+              Validators.maxLength(50)]),
           });
         })
       );
@@ -108,8 +112,8 @@ export class DetailInfoComponent {
           if (res.succeed == true) {
             this.toastr.success("Update Succeed!")
             this.nodeService.idEmit.emit(this.nodeData.id);
-
-            this.nodeService.lazyLoadEmit.emit(res.nodeModel);
+            this.appService.appEmit.emit(this.nodeData.applicationId);
+            // this.nodeService.lazyLoadEmit.emit(res.nodeModel);
           } else {
             this.toastr.error("Update Fail!")
           }

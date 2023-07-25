@@ -1,21 +1,55 @@
 <div class="tree-container">
+  <div class="button-group">
+    <button [disabled]="!this.appId" title="Search" (click)="searchClick()" class="action-button ">
+      <mat-icon>search</mat-icon>
+    </button>
+    <button [disabled]="!this.appId" title="Expand all" (click)="expandClick()" class="action-button ">
+      <mat-icon>unfold_more</mat-icon>
+    </button>
+    <button [disabled]="!this.appId" title="Collapse all" (click)="colapseClick()" class="action-button ">
+      <mat-icon>unfold_less</mat-icon>
+    </button>
+    <button [disabled]="!this.appId" title="Refresh" (click)="refresh()"   class="action-button ">
+      <mat-icon>refresh</mat-icon>
+    </button>
+    <button [disabled]="!this.appId" title="Remove all node" (click)="removeButton()" class="action-button ">
+      <mat-icon>delete</mat-icon>
+    </button>
+    <button [disabled]="!this.appId" title="Remove node" (click)="removeNode()"   class="action-button ">
+      <mat-icon>remove</mat-icon>
+    </button>
+    <button [disabled]="!this.appId" title="Add root node" (click)="addRoot()"   class="action-button ">
+      <mat-icon>add_box</mat-icon>
+    </button>
+    <button [disabled]="!this.appId" title="Add child node" (click)="addChild()"  class="action-button ">
+      <mat-icon>library_add</mat-icon>
+    </button>
+    
+    
+    
+  </div>
+  <hr />
   <cdk-virtual-scroll-viewport itemSize="50" class="viewport">
     <kendo-treeview
+      [filterable]="searchState"
+      filterInputPlaceholder="Filter"
       class="tree-component"
-      [nodes]="treeNodes"
-      [textField]="['name','name']"
+      [nodes]="parsedTreenodes"
+      textField="name"
       kendoTreeViewExpandable
       kendoTreeViewHierarchyBinding
       childrenField="childs"
       (selectionChange)="nodeClick($event)"
+      expandBy="id"
+      [(expandedKeys)]="expandKeys"
+      [expandOnFilter]="filterExpandSettings"
     >
       <ng-template class="tree-item" kendoTreeViewNodeTemplate let-dataItem>
-        <mat-icon style="height: 20px;font-size: 20px; line-height: 1.44444;" >
-          {{iconClass(dataItem)}}
+        <mat-icon style="height: 20px; font-size: 20px; line-height: 1.44444">
+          {{ iconClass(dataItem) }}
         </mat-icon>
         {{ dataItem.name }}
       </ng-template>
     </kendo-treeview>
-      
-  </cdk-virtual-scroll-viewport>  
+  </cdk-virtual-scroll-viewport>
 </div>

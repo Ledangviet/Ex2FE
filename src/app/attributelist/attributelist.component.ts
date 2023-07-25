@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output } from '@angular/core';
 import { NodeService } from '../service/node.service';
-import { NodeAttributeModel } from '../model/nodeattribute.model';
+import { NodeAttributeModel } from '../model/nodeattribute/nodeattribute.model';
 import { State, process } from "@progress/kendo-data-query";
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
@@ -30,7 +30,6 @@ export class AttributelistComponent {
   public attributes: NodeAttributeModel[] = [];
   public saveAttribute: NodeAttributeModel;
   public editingItem = new NodeAttributeModel(0, "", 0);
-  
   public formGroup: FormGroup;
   private editedRowIndex: number;
 
@@ -44,9 +43,17 @@ export class AttributelistComponent {
     if (this.editId) {
       this.loadData(this.editId)
     }
-    this.nodeService.idEmit.subscribe((id) => {
+    this.eventSubscription.add(this.nodeService.idEmit.subscribe((id) => {
       this.loadData(id);
-    })
+    }));
+    this.eventSubscription.add(this.nodeService.gridEmit.subscribe((id) => {
+      if(id != 0){
+        this.loadData(id);
+      }else
+      this.attributes = [];
+      
+    }))
+    
   }
 
   //subscrible load node service by node 
@@ -59,7 +66,6 @@ export class AttributelistComponent {
   }
 
 
-  onStateChange(state: State) { }
   //cancel editor
   cancelHandler(args: CancelEvent) {
     this.closeEditor(args.sender, args.rowIndex);
@@ -92,8 +98,8 @@ export class AttributelistComponent {
    */
   saveHandler({ sender, rowIndex, formGroup, isNew }: SaveEvent): void {
     const attribute: NodeAttributeModel = formGroup.value;
-    this.eventSubscription.add(this.nodeService.save(this.editingItem.id, attribute.name, parseInt(this.nodeId), isNew).subscribe(res => {
-      this.nodeService.idEmit.emit(this.nodeId);
+    this.eventSubscription.add(this.nodeService.save(this.editingItem.id, attribute.name, parseInt(this.nodeId), isNew).subscribe(res => {     
+      this.loadData(this.nodeId);
     }))
     sender.closeRow(rowIndex);
   }
@@ -118,7 +124,8 @@ export class AttributelistComponent {
         if (result.text == "Yes") {
           this.eventSubscription.add(this.nodeService.remove(args.dataItem).subscribe(res => {
             this.toastr.success("Delete succeeded!");
-            this.loadData(this.nodeId);
+             this.attributes = this.attributes.filter(e => e.id !== args.dataItem.id)            
+            // this.loadData(this.nodeId);
           }))
         }
         else {
@@ -140,7 +147,8 @@ export class AttributelistComponent {
     // define all editable fields validators and default values
     this.formGroup = new FormGroup({
       id: new FormControl({ value: 0, disabled: true },),
-      name: new FormControl("", [Validators.required]),
+      name: new FormControl("", [Validators.required,
+        Validators.maxLength(50)]),
     });
     // show the new row editor, with the `FormGroup` build above
     args.sender.addRow(this.formGroup);

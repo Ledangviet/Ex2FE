@@ -1,0 +1,32 @@
+.applicaton-container {
+  height: 310px;
+  max-width: 650px;
+  .application-grid {
+    width: 100%;
+    height: 80%;
+    background-color: aliceblue;
+  }
+  .button-group {
+    background-color: aliceblue;
+    position: absolute;
+    bottom: 10px;
+    height: 30px;
+    width: 95%;
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    .button-action {
+      height: 30px;
+      min-width: 60px;
+      border: 0px;
+      border-radius: 5px;
+      background-color: darkblue;
+      color: white;
+      margin-left: 5px;
+      margin-right: 5px;
+    }
+    .new-button{
+        margin-right: 395px;
+    }
+  }
+}

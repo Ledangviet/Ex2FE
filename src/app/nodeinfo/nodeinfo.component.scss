@@ -1,6 +1,7 @@
 .node-container{  
     height: 200px;
     width: 100%;
+    background-color: aliceblue;
 }
 
 .form-info{
@@ -19,10 +20,9 @@
     height: 30px;
     border:0px ;
     border-radius: 5px;
-    background-color: darkturquoise;
     color: white;
-    top: 235px;
-    left: 725px;
+    top: 240px;
+    left: 555px;
 }
 .edit-button{
     position: absolute;
@@ -30,9 +30,19 @@
     height: 30px;
     border:0px ;
     border-radius: 5px;
-    background-color: darkturquoise;
     color: white;
-    top: 235px;
-    left: 353px;
+    top: 240px;
+    left: 433px;
+}
+
+.add-button{
+    position: absolute;
+    width: 120px;
+    height: 30px;
+    border:0px ;
+    border-radius: 5px;
+    color: white;
+    top: 240px;
+    left: 680px;
 }
 

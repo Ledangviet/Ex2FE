@@ -6,6 +6,7 @@ import { NodeService } from '../service/node.service';
 import { DialogRef, DialogService } from '@progress/kendo-angular-dialog';
 import { EditComponent } from '../edit/edit.component';
 import { AuthenticationService } from '../service/authen.service';
+import { ApplicationListComponent } from '../applicationlist/applicationlist.component';
 
 @Component({
   selector: 'app-home',
@@ -19,16 +20,25 @@ export class HomeComponent {
   public token: string;
   constructor(
     private router: Router,
-    private cookieService: CookieService,
-    private jwthelper: JwtHelperService,
-    private nodeService: NodeService,
     private authenService:AuthenticationService,
+    private dialogService:DialogService,
   ) { }
 
   ngOnInit() {
     
     this.userName = this.authenService.userName;
     if(this.userName) this.loginContent = "Logout"   
+  }
+
+  /**
+   * Open application
+   */
+  openApplication(){
+    const dialogRef: DialogRef = this.dialogService.open({
+      title: "Application List",
+      content: ApplicationListComponent,
+    });
+
   }
 
   /**

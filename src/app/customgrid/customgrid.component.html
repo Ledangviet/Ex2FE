@@ -1,0 +1,33 @@
+<div class="grid-container">
+  <kendo-grid
+    [kendoGridBinding]="sourceData"
+    [title]="title"
+    [pageable]="this.pageable"
+    [filterable]="this.filterable"
+    [pageSize]="this.pagesize"
+    [sortable]="this.sortable"
+    [selectable]="this.selectable"
+    (remove)="remove($event)"
+    (selectionChange)="selectionChange($event)"
+  >
+    <kendo-grid-column
+      *ngFor="let item of columnlist"
+      [headerStyle]="{ 'background-color': 'darkblue', color: 'white' }"
+      [field]="item.field"
+      [title]="item.title"
+      [width]="item.width"
+    ></kendo-grid-column>
+
+    <kendo-grid-command-column
+        [headerStyle]="{ 'background-color': 'darkblue', color: 'white' }"
+        title="command"
+        [width]="120"
+      >
+        <ng-template kendoGridCellTemplate let-isNew="isNew">
+          <button *ngFor="let btn of actionlist" kendoGridRemoveCommand class="themeColor-custom">
+            {{btn}}
+          </button>
+        </ng-template>
+      </kendo-grid-command-column>
+  </kendo-grid>
+</div>

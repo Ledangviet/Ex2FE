@@ -1,24 +1,42 @@
-.tree-container{  
+.tree-container {
+  margin-left: 10px;
+  border: 1px solid aliceblue;
+  padding: 20px;
+  padding-right: 5px;
+  border-radius: 5px;
+  min-width: 350px;
+  height: 550px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background-color: aliceblue;
+  .button-group {
+    background-color: aliceblue;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-items: center;
     margin-left: 10px;
-    border:1px solid rgb(232, 232, 232);
-    padding:20px; 
-    padding-right: 5px;   
-    border-radius: 5px;
-    min-width: 230px;
-    height: 550px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    background-color: rgb(247, 247, 247);
+    .action-button {
+      background-color: aliceblue;
+      width: 30px;
+      height: 30px;
+      border: 0px;
+      border-radius: 5px;
+      color: rgb(91, 91, 91);
+      margin-left: 5px;
+      margin-right: 5px;
+      margin-top: 5px;
+    }
+  }
 }
-.tree-component{
-    font-size: 16px;
+.tree-component {
+  font-size: 16px;
 }
 .viewport {
-    height: 550px;
-    width: 270px;
-    font-size: medium;
+  height: 500px;
+  width: 350px;
+  font-size: medium;
 }
-.tree-item{
-    font-size: 12px;
-    line-height: 50px;
+.tree-item {
+  font-size: 12px;
+  line-height: 50px;
 }
-  

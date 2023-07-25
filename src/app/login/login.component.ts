@@ -2,10 +2,13 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '../service/authen.service';
 import { Subscription } from 'rxjs';
-import { SignInModel, SignInResponseModel, SignUpModel, SignUpResponseModel } from '../model/authen.model';
+import { SignInModel} from '../model/authentication/signin.model';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { SignInResponseModel } from '../model/authentication/signinresponse.model';
+import { SignUpModel } from '../model/authentication/signup.model';
+import { SignUpResponseModel } from '../model/authentication/signupresonse.model';
 
 @Component({
   selector: 'app-login',
@@ -56,14 +59,13 @@ export class LoginComponent {
             this.toastr.warning(this.loginData.status);
             return;
           }
-         
+          
           this.toastr.success(this.loginData.status);
-
           //set data to cookie
           this.cookieService.set('accesstoken', this.loginData.token.accessToken.toString());
           this.cookieService.set('refreshtoken', this.loginData.token.refreshToken.toString());
           this.cookieService.set('username', this.loginData.token.userName.toString());
-          console.log(this.loginData.token.accessToken);
+          this.authenService.refreshToken()
           this.router.navigate(['/home']);
           //this.router.navigate(['/home']);
         }));
@@ -87,7 +89,7 @@ export class LoginComponent {
       //call register api if loginState is false
       this.eventSubscription.add(this.authenService.register(this.registerModel).subscribe((res: SignUpResponseModel) => {
         this.toastr.success(res.status);
-        this.router.navigate(['/login']);
+        this.loginStatus = true;
       }))
     }
   }
