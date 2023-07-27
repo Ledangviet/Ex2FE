@@ -25,9 +25,7 @@ import { ColumnList } from "../customgrid/customgridmodel/columnlist.model";
     public selectedApp : number;
     public appData: ApplicationModel[] = [];
     public eventSubscription: Subscription = new Subscription();
-    
-
-
+  
 
     constructor(
       private dialogService:DialogService,

@@ -1,12 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NodeService } from '../service/node.service';
-import { NodeModel, UpdateResponseModel } from '../model/node/node.model';
+import { NodeModel } from '../model/node/node.model';
 import { Subscription } from 'rxjs';
 import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-angular-dialog';
 import { UpdateNodeModel } from '../model/node/updatenode.model';
 import { ToastrService } from 'ngx-toastr';
 import { ApplicationService } from '../service/application.service';
+import { UpdateResponseModel } from '../model/node/updateresponse.model';
 
 @Component({
   selector: 'app-detail-info',
@@ -37,7 +38,7 @@ export class DetailInfoComponent {
     private dialog: DialogRef,
     private toastr: ToastrService,
     private dialogService: DialogService,
-    private appService:ApplicationService,
+    private appService: ApplicationService,
   ) { }
 
 
@@ -53,11 +54,11 @@ export class DetailInfoComponent {
           this.nodeData = this.nodeService.FormatData(res);
           this.form = new FormGroup({
             title: new FormControl(this.nodeData.name, [Validators.required,
-              Validators.maxLength(50)]),
+            Validators.maxLength(50)]),
             type: new FormControl(this.nodeData.nodeType, [Validators.required]),
             submitdate: new FormControl(this.nodeData.submissionDate.toString().slice(0, 10), [Validators.required]),
             owner: new FormControl(this.nodeData.owner, [Validators.required,
-              Validators.maxLength(50)]),
+            Validators.maxLength(50)]),
           });
         })
       );

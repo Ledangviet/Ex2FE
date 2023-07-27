@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NodeService } from '../service/node.service';
-import { NodeModel, UpdateResponseModel } from '../model/node/node.model';
+import { NodeModel} from '../model/node/node.model';
 import { Subscription, take } from 'rxjs';
 import { ApplicationService } from '../service/application.service';
 import { FilterExpandSettings } from '@progress/kendo-angular-treeview';
@@ -41,10 +41,6 @@ export class TreeviewComponent {
       this.resNode = node;
       this.lazyLoad(this.treeNodes, 0);
     })
-    // this.eventSubscription.add(
-    //   this.nodeService.reloadTreeEmit.subscribe(e => {
-    //     this.loadAppTree();
-    //   }))
   }
 
   /**
@@ -68,6 +64,12 @@ export class TreeviewComponent {
 
   }
 
+  /**
+   * Search node and bind new list to tree
+   * @param nodes 
+   * @param term 
+   * @returns 
+   */
   public search(nodes: NodeModel[], term: string): NodeModel[] {
     var acc: NodeModel[] = []
     nodes.map((node: NodeModel) => {

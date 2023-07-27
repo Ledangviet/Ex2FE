@@ -1,12 +1,10 @@
 import { Component, Input, Output } from '@angular/core';
 import { NodeService } from '../service/node.service';
 import { NodeAttributeModel } from '../model/nodeattribute/nodeattribute.model';
-import { State, process } from "@progress/kendo-data-query";
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import {
   GridComponent,
-  GridDataResult,
   CancelEvent,
   EditEvent,
   RemoveEvent,
@@ -16,6 +14,7 @@ import {
 import { Subscription } from 'rxjs';
 import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-angular-dialog';
 import { ToastrService } from 'ngx-toastr';
+import { ApplicationService } from '../service/application.service';
 
 @Component({
   selector: 'app-attributelist',
@@ -36,13 +35,22 @@ export class AttributelistComponent {
   constructor(
     private nodeService: NodeService,
     private dialogService: DialogService,
-    private toastr:ToastrService
+    private toastr:ToastrService,
+    private appService:ApplicationService
   ) { }
 
   ngOnInit() {
+    //reset list after other action
+    this.eventSubscription.add(this.appService.appEmit.subscribe( e=> {
+      this.attributes = [];
+    }))
+
+    //if there's id input then load data
     if (this.editId) {
       this.loadData(this.editId)
     }
+
+    //subscribe id to load data
     this.eventSubscription.add(this.nodeService.idEmit.subscribe((id) => {
       this.loadData(id);
     }));

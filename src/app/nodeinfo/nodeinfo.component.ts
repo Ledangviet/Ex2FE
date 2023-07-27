@@ -1,7 +1,7 @@
 import { Component, HostListener, Input } from '@angular/core';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { NodeService } from '../service/node.service';
-import { NodeModel, UpdateResponseModel } from '../model/node/node.model';
+import { NodeModel } from '../model/node/node.model';
 import { Subscription } from 'rxjs';
 import { UpdateNodeModel } from '../model/node/updatenode.model';
 import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-angular-dialog';
@@ -12,6 +12,7 @@ import { AddApplicationModel } from '../model/application/addapplication.model';
 import { CookieService } from 'ngx-cookie-service';
 import { AddNodeModel } from '../model/node/addnode.model';
 import { mode } from 'crypto-js';
+import { UpdateResponseModel } from '../model/node/updateresponse.model';
 
 @Component({
   selector: 'app-nodeinfo',
@@ -21,7 +22,7 @@ import { mode } from 'crypto-js';
 
 export class NodeinfoComponent {
 
-  public appId:number;
+  public appId: number;
   public addStatus = false;
   public addState: number;
   public updateState = false;
@@ -59,12 +60,16 @@ export class NodeinfoComponent {
 
     //subcrible add node emit
     this.eventSubscription.add(this.nodeService.addNodeEmit.subscribe((id: number) => {
-      if (id == 1 && this.nodeId != "0" && this.nodeData.nodeType == "Folder") {
-        this.toastr.warning("Add child node!");
-        this.form = new FormGroup({
-          title: new FormControl("", [Validators.required]),
-          type: new FormControl("Folder", [Validators.required]),
-        });
+      if (id == 1 && this.nodeId != "0") {
+        if(this.nodeData.nodeType == "Folder"){
+          this.toastr.warning("Add child node!");
+          this.form = new FormGroup({
+            title: new FormControl("", [Validators.required]),
+            type: new FormControl("Folder", [Validators.required]),
+          })         
+        }else{
+          return;
+        }        
       }
       if (id == 0) {
         this.toastr.warning("Add root node!");
@@ -79,16 +84,22 @@ export class NodeinfoComponent {
 
     this.eventSubscription.add(this.appService.appEmit.subscribe(id => {
       this.appId = id;
+      this.form = new FormGroup({
+        title: new FormControl("", [Validators.required]),
+        type: new FormControl("Folder", [Validators.required]),
+      });
     }))
 
     //subcrible id from treeview component and fetch API to get data & bind to UI
     this.eventSubscription.add(
       this.nodeService.idEmit.subscribe(id => {
-        this.addStatus = false;
-        if (this.form.dirty && !this.updateState) {
+
+        //if data is adding data
+        if (this.addStatus == true) {
+          this.addStatus = false;
           const dialog: DialogRef = this.dialogService.open({
             title: "Data hasn't been save!",
-            content: "Do you want to update?",
+            content: "Do you want to add?",
             actions: [{ text: "Yes", themeColor: "dark" }, { text: "No" }],
             width: 450,
             height: 200,
@@ -97,60 +108,44 @@ export class NodeinfoComponent {
 
           this.eventSubscription.add(dialog.result.subscribe((result) => {
             if (result instanceof DialogCloseResult) {
+              this.bindingData(id);
               return;
             } else {
               if (result.text == "Yes") {
-                this.saveClick()
+                this.addClick();
+                this.bindingData(id);
+                this.addStatus = false;
+                return;
               }
-
-              //binding new node data
-              this.nodeId = id
-              this.eventSubscription.add(
-                this.nodeService.getNodeDataById(this.nodeId).subscribe((res) => {
-                  // res.index = this.nodeData.index;
-                  this.nodeData = this.nodeService.FormatData(res);
-                  if (this.nodeData.nodeType == "File") this.pattern = this.fileNamePattern;
-                  else this.pattern = this.folderPattern;
-                  this.form = new FormGroup({
-                    title: new FormControl(this.nodeData.name,
-                      [Validators.required,
-                      Validators.pattern(this.pattern),
-                      Validators.maxLength(50)]
-                    ),
-                    type: new FormControl(this.nodeData.nodeType, [Validators.required]),
-                  })
-                  this.eventSubscription.add(this.form.valueChanges.subscribe(e => {
-                    this.updateState = false;
-                  }))
-                })
-              )
             }
           }))
         } else {
+          //if data is updating data
+          if (this.form.dirty && !this.updateState) {
+            const dialog: DialogRef = this.dialogService.open({
+              title: "Data hasn't been save!",
+              content: "Do you want to update?",
+              actions: [{ text: "Yes", themeColor: "dark" }, { text: "No" }],
+              width: 450,
+              height: 200,
+              minWidth: 250,
+            });
 
-          this.nodeId = id
-          this.eventSubscription.add(
-            this.nodeService.getNodeDataById(this.nodeId).subscribe((res) => {
-              this.nodeData = this.nodeService.FormatData(res);
-              if (this.nodeData.nodeType == "File") this.pattern = this.fileNamePattern;
-              else this.pattern = this.folderPattern;
-
-              this.form = new FormGroup({
-                title: new FormControl(this.nodeData.name,
-                  [
-                    Validators.required,
-                    Validators.pattern(this.pattern),
-                    Validators.maxLength(50)
-                  ]
-                ),
-                type: new FormControl(this.nodeData.nodeType, [Validators.required]),
-              })
-              this.eventSubscription.add(this.form.valueChanges.subscribe(e => {
-                this.updateState = false;
-              }))
-            })
-          )
+            this.eventSubscription.add(dialog.result.subscribe((result) => {
+              if (result instanceof DialogCloseResult) {
+                this.bindingData(id);
+                return;
+              } else {
+                if (result.text == "Yes") {
+                   this.saveClick()                 
+                }               
+              }
+              this.bindingData(id);
+            }))
+          }
         }
+        //None of adding/upating then normaly bind data
+        this.bindingData(id)               
       })
     );
 
@@ -158,6 +153,33 @@ export class NodeinfoComponent {
       this.form.valueChanges.subscribe(() => {
         this.updateState = false;
       }))
+
+  }
+
+  //binding new node data
+  bindingData(id: string) {
+    this.nodeId = id
+    this.eventSubscription.add(
+      this.nodeService.getNodeDataById(this.nodeId).subscribe((res) => {
+        this.nodeData = this.nodeService.FormatData(res);
+        if (this.nodeData.nodeType == "File") this.pattern = this.fileNamePattern;
+        else this.pattern = this.folderPattern;
+
+        this.form = new FormGroup({
+          title: new FormControl(this.nodeData.name,
+            [
+              Validators.required,
+              Validators.pattern(this.pattern),
+              Validators.maxLength(50)
+            ]
+          ),
+          type: new FormControl(this.nodeData.nodeType, [Validators.required]),
+        })
+        this.eventSubscription.add(this.form.valueChanges.subscribe(e => {
+          this.updateState = false;
+        }))
+      })
+    )
 
   }
 
@@ -180,14 +202,14 @@ export class NodeinfoComponent {
         new Date(),
       )
 
-      this.eventSubscription.add(this.nodeService.addNode(model).subscribe( (res : NodeModel) => { 
+      this.eventSubscription.add(this.nodeService.addNode(model).subscribe((res: NodeModel) => {
         this.toastr.success("Add succeeded!")
-        this.form =  new FormGroup({
+        this.form = new FormGroup({
           title: new FormControl("", [Validators.required]),
           type: new FormControl("Folder", [Validators.required]),
         });
         this.appService.appEmit.emit(this.appId);
-        this.nodeService.gridEmit.emit(0)    
+        this.nodeService.gridEmit.emit(0)
       }))
     }
   }
@@ -195,6 +217,8 @@ export class NodeinfoComponent {
 
 
   saveClick() {
+    console.log("update");
+
     //logic validate
     if (this.nodeData.nodeType == "Folder" && this.form.value.type == "File") {
       this.toastr.error("Folder can't update to File!")
@@ -243,7 +267,7 @@ export class NodeinfoComponent {
     userInfo.nodeId = this.nodeId
   }
 
-  
+
 
   //unsubscrible subscription
   ngOnDestroy() {
