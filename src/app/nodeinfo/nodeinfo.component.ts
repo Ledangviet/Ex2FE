@@ -94,9 +94,11 @@ export class NodeinfoComponent {
     this.eventSubscription.add(
       this.nodeService.idEmit.subscribe(id => {
 
+        if(this.addStatus == false){
+          this.bindingData(id);  
+        }
         //if data is adding data
         if (this.addStatus == true) {
-          this.addStatus = false;
           const dialog: DialogRef = this.dialogService.open({
             title: "Data hasn't been save!",
             content: "Do you want to add?",
@@ -106,6 +108,8 @@ export class NodeinfoComponent {
             minWidth: 250,
           });
 
+          console.log("add node");
+          
           this.eventSubscription.add(dialog.result.subscribe((result) => {
             if (result instanceof DialogCloseResult) {
               this.bindingData(id);
@@ -113,8 +117,6 @@ export class NodeinfoComponent {
             } else {
               if (result.text == "Yes") {
                 this.addClick();
-                this.bindingData(id);
-                this.addStatus = false;
                 return;
               }
             }
@@ -144,8 +146,7 @@ export class NodeinfoComponent {
             }))
           }
         }
-        //None of adding/upating then normaly bind data
-        this.bindingData(id)               
+        //None of adding/upating then normaly bind data                    
       })
     );
 
@@ -156,7 +157,10 @@ export class NodeinfoComponent {
 
   }
 
-  //binding new node data
+  /**
+   * binding new node data
+   * @param id 
+   */
   bindingData(id: string) {
     this.nodeId = id
     this.eventSubscription.add(
@@ -201,6 +205,8 @@ export class NodeinfoComponent {
         this.appId,
         new Date(),
       )
+      console.log(model);
+      
 
       this.eventSubscription.add(this.nodeService.addNode(model).subscribe((res: NodeModel) => {
         this.toastr.success("Add succeeded!")
@@ -210,6 +216,7 @@ export class NodeinfoComponent {
         });
         this.appService.appEmit.emit(this.appId);
         this.nodeService.gridEmit.emit(0)
+        this.addStatus = false;
       }))
     }
   }
@@ -246,11 +253,8 @@ export class NodeinfoComponent {
       this.eventSubscription.add(
         this.nodeService.updateNodeData(updateNodeModel).subscribe((res: UpdateResponseModel) => {
           this.toastr.success("Update Succeeded!");
-          //this.nodeService.reloadTreeEmit.emit(res);
           this.updateState = true;
-          //this.nodeService.lazyLoadEmit.emit(res.nodeModel);
           this.appService.appEmit.emit(this.nodeData.applicationId);
-          // this.nodeService.lazyLoadEmit.emit(res);
         })
       )
     }

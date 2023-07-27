@@ -2,7 +2,7 @@
     <form [formGroup]="form">
         <mat-form-field class="title-formfield" appearance="outline">
           <mat-label>{{info}}</mat-label>
-          <input formControlName="text" matInput />
+          <input formControlName="text" [autofocus]="true" matInput />
           <mat-error *ngIf="this.form.invalid"
             >{{info}} required!</mat-error>
         </mat-form-field>

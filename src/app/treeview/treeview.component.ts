@@ -15,6 +15,7 @@ import { CommonDialogComponent } from '../common-dialog/commondialog.component';
 })
 export class TreeviewComponent {
 
+  public selectedNodeId:number;
   public searchState = true;
   public appId: number;
   public parentNodeId: number[] = [];
@@ -172,6 +173,7 @@ export class TreeviewComponent {
     this.index = arg.index.toString().split("_");
     this.nodeService.currentIndex = arg.index.toString().split("_");
     this.nodeService.idEmit.emit(arg.dataItem.id);
+    this.selectedNodeId = arg.dataItem.id;
   }
 
   removeButton() {
@@ -241,7 +243,29 @@ export class TreeviewComponent {
    * remove one node
    */
   removeNode() {
+    const dialog: DialogRef = this.dialogService.open({
+      title: "Delete!",
+      content: "Are you sure to delete node?",
+      actions: [{ text: "Yes", themeColor: "dark" }, { text: "No" }],
+      width: 450,
+      height: 200,
+      minWidth: 250,
+    });
 
+    this.eventSubscription.add(dialog.result.subscribe((result) => {
+      if (result instanceof DialogCloseResult) {
+        return;
+      } else {
+        if (result.text == "Yes") {
+          this.eventSubscription.add(
+            this.nodeService.removeNode(this.selectedNodeId).subscribe( (res: NodeModel[]) => {
+              this.toastr.success("Delete succeess!");
+              this.appService.appEmit.emit(this.appId);
+            })
+          )
+        }
+      }
+    }))
   }
 
   //unsuscrible

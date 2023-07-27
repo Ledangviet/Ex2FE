@@ -80,10 +80,14 @@ export class NodeService {
     })
   }
 
+  /**
+   * Add node 
+   * @param model 
+   * @returns 
+   */
   addNode(model: AddNodeModel) : Observable<NodeModel>{
     return this.httpClient.post<NodeModel>(this.url,model,{headers: this.authenService.header})
   }
-
 
   /**
    * remove node by aplication id
@@ -95,7 +99,18 @@ export class NodeService {
       headers: this.authenService.header
     })
   }
-
+  /**
+   * remove node
+   */
+  removeNode(id:number) : Observable<NodeModel[]>{
+    return this.httpClient.delete<NodeModel[]>(this.url,{
+      headers:new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.cookieService.get('accesstoken'),
+        'id': id,
+    })
+    })
+  }
 
   /**
    * Call Get Node Data Api
