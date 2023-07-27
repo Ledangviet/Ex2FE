@@ -25,6 +25,7 @@ import { ColumnList } from "./customgridmodel/columnlist.model";
     remove(args: RemoveEvent){
         this.removeEvent.emit(args);
     }
+    
     selectionChange(args:any){
         this.selection.emit(args);
     }   

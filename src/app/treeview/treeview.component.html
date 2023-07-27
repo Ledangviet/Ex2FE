@@ -21,7 +21,7 @@
     <button [disabled]="!this.appId" title="Add root node" (click)="addRoot()"   class="action-button ">
       <mat-icon>add_box</mat-icon>
     </button>
-    <button [disabled]="!this.appId" title="Add child node" (click)="addChild()"  class="action-button ">
+    <button [disabled]="(this.selectedNodeId == 0)" title="Add child node" (click)="addChild()"  class="action-button ">
       <mat-icon>library_add</mat-icon>
     </button>
     

@@ -15,7 +15,7 @@ import { CommonDialogComponent } from '../common-dialog/commondialog.component';
 })
 export class TreeviewComponent {
 
-  public selectedNodeId:number;
+  public selectedNodeId:number = 0;
   public searchState = true;
   public appId: number;
   public parentNodeId: number[] = [];
@@ -138,6 +138,7 @@ export class TreeviewComponent {
   loadAppTree() {
     this.eventSubscription.add(
       this.appService.appEmit.subscribe(e => {
+        this.selectedNodeId = 0;
         this.appId = e;
         this.nodeService.getNodeByApplicationId(e).subscribe((res: NodeModel[]) => {
           this.treeNodes = res;
